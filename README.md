@@ -1,6 +1,6 @@
 # gamjagoon-skills-pack
 
-**AGENTS.md + six Codex skills for requirements, architecture, development, and reviews.**
+**AGENTS.md + six workflow skills and a shared grilling skill.**
 
 `AGENTS.md`에 공통 작업 지침을 두고, 각 단계를 별도 스킬로 나눈 팩입니다.
 `install.sh`가 Markdown 파일을 프로젝트에 설치합니다. Python·uv·npm 패키지는 필요 없습니다.
@@ -24,6 +24,7 @@ Codex가 이 저장소를 찾아 `install.sh`로 `AGENTS.md`와 `.agents/skills/
 install.sh
 AGENTS.md
 .agents/skills/
+├── gsp-grilling/SKILL.md
 ├── gsp-requirements/SKILL.md
 ├── gsp-requirements-review/SKILL.md
 ├── gsp-architecture/SKILL.md
@@ -51,6 +52,17 @@ AGENTS.md
 실패 조건으로 다시 확인합니다. 새 작업과 재개를 구분하고, 변경된 부분의 이전 리뷰만
 다시 확인합니다. 최종 결과에는 완료 근거와 미실행 항목을 함께 남깁니다.
 
+## 모호한 내용은 질문으로 확인
+
+모든 단계에 공통 보조 스킬 [gsp-grilling](.agents/skills/gsp-grilling/SKILL.md)이 연결됩니다.
+별도 설치나 “질문해줘” 프롬프트 없이, 결과를 바꾸는 모호한 내용은 선택지·추천안과 함께 묻습니다.
+답변이 필요한 부분은 기다리고, 답변과 무관한 작업은 계속합니다. 파일이나 실행으로 알 수 있는
+사실은 먼저 조사하며 이미 답한 내용은 다시 묻지 않습니다.
+
+리뷰 서브에이전트가 발견한 질문도 주 작업자가 모아서 전달합니다. 답변에 따라 후속 질문을
+이어가고, 결정이 끝나면 해당 단계부터 진행합니다. 작업 흐름은 기존 여섯 단계 그대로이며,
+설치되는 스킬은 여섯 단계용 스킬과 질문용 보조 스킬을 합해 일곱 개입니다.
+
 ## 모델과 병렬 작업
 
 [AGENTS.md](AGENTS.md)에 Sol/Luna의 역할별 effort 권장값이 있습니다. 현재 모델이나
@@ -75,7 +87,7 @@ AGENTS.md
 
 3. 충돌하면 대상과 소스의 차이를 확인한다. 기존 사용자 수정은 보존·병합하고, 교체가 적절한 관리 파일은 `--overwrite --dry-run` 확인 후 `--overwrite`로 백업·교체한다. 설치를 통과시키기 위해 사용자 내용을 버리지 않는다.
 4. Codex가 `.agents` 쓰기 승인을 요구하면 정상 승인 절차를 이용한다. 승인이 불가능하면 설치 미완료와 차단 원인을 알린다. 스크립트가 플랫폼 권한을 우회하지는 않는다.
-5. 설치한 프로젝트의 `AGENTS.md`, 여섯 `SKILL.md`와 참조 문서를 읽어 현재 대화에 적용한다. 스크립트 성공은 파일 설치 확인이며, 실제 스킬 탐색·서브에이전트 실행과 구분한다. 작업 원문이 없으면 설치 완료 후 기다린다.
+5. 설치한 프로젝트의 `AGENTS.md`, 일곱 `SKILL.md`와 참조 문서를 읽어 현재 대화에 적용한다. 스크립트 성공은 파일 설치 확인이며, 실제 스킬 탐색·서브에이전트 실행과 구분한다. 작업 원문이 없으면 설치 완료 후 기다린다.
 
 구버전 업데이트에서 기존 `TASK.md`와 입력 키 설정은 유지합니다. 스크립트는 구버전의
 `timeboxed-workflow`나 `.codex/agents/gsp-*.toml`을 자동 삭제하지 않습니다.
