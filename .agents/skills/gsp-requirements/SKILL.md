@@ -28,6 +28,10 @@ Prefer the existing document location for the work record; if none exists, use t
 
 Do not arbitrarily settle implementation technology as a requirement or add functionality absent from the original text. Do not state unverifiable numbers or tolerances as facts.
 
+## Human-reviewable deliverables
+
+Follow the "Documents for human review" contract in the project AGENTS.md. The lead maintains a Markdown source and a matching, self-contained HTML view (default `TASK.md` and `TASK.html`), using the user's language and existing document locations. Publish the requirements and acceptance criteria, original-text references, unresolved questions with recommendations, and confirmed decisions in both views. If only requirements were requested, do not fill later stages with invented results. Keep both views synchronized, preserve unrelated files, and link both in the user-facing handoff. Respect explicit format and no-write constraints; do not claim an HTML file exists if it was not created.
+
 ## Completion and handoff
 
 Once the original text and requirement IDs are linked and the completion criteria can be verified, request the native Codex agent `gsp-reviewer` with mode `requirements`. Pass the absolute project root, requested scope, original text and requirements paths, requirement IDs, baseline state, checks performed, and unresolved questions with existing answers. Use the agent defined in `.codex/agents/gsp-reviewer.toml`; ask it to return an independent review to the lead worker, who records and resolves findings before continuing. Do not present an author's self-review as independent. If the native role or independent subagents are unavailable, follow the availability fallback in AGENTS.md and disclose the review method. If important decisions remain unresolved, mark those items and their dependent scope; do not treat all preparation as complete. For change requests, preserve existing items and decision history, and identify the changes and affected downstream stages. If the user requested only requirements writing, stop with this deliverable.

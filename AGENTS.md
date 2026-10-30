@@ -36,6 +36,23 @@ At the start, compare the current request with the source and unfinished items t
 
 Do not seek renewed approval at each stage for work already approved. Investigate facts that can be checked with files or tools, and ask only for important user decisions that change the outcome. Continue work that does not depend on that decision or a blocking defect.
 
+## Documents for human review
+
+For substantive requirements, design, implementation/verification, and review deliverables, the lead produces both Markdown and HTML without requiring a separate format prompt. Use the user's requested language for the deliverables; these English instructions do not require English output. Prefer the existing Markdown work record and a sibling HTML view; otherwise use `TASK.md` and `TASK.html`. Respect explicitly requested formats, locations, and no-write constraints. Installation alone and simple questions do not create these files. If writing is forbidden, return the permitted Markdown in conversation and state that no HTML file was generated.
+
+Markdown is the source of truth. Update it first, then refresh the HTML from the same content at each substantive stage handoff, after recording review results or user decisions, and before final delivery. Keep stable requirement, question, and finding IDs and the same revision label in both views. Do not overwrite unrelated existing documents; preserve their content or choose a non-conflicting sibling path and report it. Multiple existing documents may keep their layout with corresponding HTML views rather than being merged into a new record.
+
+Make both views easy to review:
+- Start with the current stage, scope, outcome so far, changes since the previous revision, unresolved blockers, and decisions needed from the user. Distinguish recommendations from accepted decisions.
+- Include only sections relevant to the requested scope: requirements and acceptance criteria; design rationale and alternatives; implementation tasks and dependencies; review findings; verification evidence and limitations. Do not invent completed stages, PASS verdicts, or test results to fill a template.
+- Use concise headings, a table of contents, and linked IDs. Show findings in a table with blocking status, requirement ID, location, impact, suggested fix, and closure evidence. Show checks with command/input, expected and observed result, evidence type, and whether they passed, failed, or were not run. Provide source/artifact references and mark unavailable links as unavailable.
+- Use portable, GitHub-compatible Markdown with working table-of-contents links. Do not assume renderer-specific heading-ID syntax works. Put literal markup and code in inline or fenced code so quoted input remains visible as text in Markdown too.
+- Keep the complete evidence available in Markdown and HTML; long logs or code may be collapsed in HTML with native `details` elements. Do not omit uncertainty or unrun checks from the HTML summary.
+
+Produce a self-contained UTF-8 HTML document with embedded CSS, semantic headings, internal navigation, readable tables and code blocks, visible status text (not color alone), responsive layout, and print styles. It must open as a local file without a server, build step, CDN, external fonts, or JavaScript. Escape source text and code before inserting it into HTML; treat quotes, logs, and user data as text rather than executable markup. Use safe links to available sources instead of embedding active content. Do not add a rendering dependency solely for this output.
+
+The reviewer remains read-only: it returns structured findings to the lead, who updates both files. The reviewer checks consistency between both views when they are present; formatting does not replace reviewing source artifacts or running relevant checks. Before handoff, compare decisions, IDs, verdicts, and evidence between the two views, check links and local readability, and state any check not performed. End the user-facing delivery with clickable links to both documents; files and summaries alone do not count as the user answering an open question.
+
 ## Grilling in every stage
 
 Apply [gsp-grilling](.agents/skills/gsp-grilling/SKILL.md) alongside all six stages. Investigate facts verifiable from the source, files, or execution, and ask the user about ambiguous intent, policy, or expected behavior that changes the outcome. Ask questions whose prerequisite decisions have been made, together with recommendations, and continue to the next round according to the answers. Do not merely record questions and move on or treat recommendations as answers.
