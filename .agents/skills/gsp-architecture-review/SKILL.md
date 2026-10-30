@@ -1,32 +1,32 @@
 ---
 name: gsp-architecture-review
-description: 설계를 요구사항·기존 코드·실험 근거와 대조해 실행 가능성, 누락된 경계와 과도한 복잡성을 읽기 전용으로 검토합니다.
+description: Review a design read-only against requirements, existing code, and experimental evidence for feasibility, missing boundaries, and excessive complexity.
 ---
 
-# 아키텍처 리뷰
+# Architecture review
 
-입력은 원문 요구사항, 현재 설계·구현 작업, 관련 기존 코드와 실험 결과다. 전달된 요약만 읽지 말고 실제 설계·관련 코드를 열어 담당 경계와 검증 경로를 대조한다. 요구사항 리뷰를 반복하기보다 설계가 요구사항을 구현할 수 있는지 확인한다.
+Inputs are the original requirements, current design and implementation tasks, relevant existing code, and experiment results. Open the actual design and relevant code rather than reading only the supplied summary, and compare responsibility boundaries and verification paths. Rather than repeating the requirements review, check whether the design can implement the requirements.
 
-## 모호함 확인 — grilling
+## Check ambiguity — grilling
 
-이 단계에서는 [gsp-grilling](../gsp-grilling/SKILL.md)을 함께 읽고 적용한다. 설계의 가정에 사용자 결정 근거가 없거나 여러 허용 가능한 계약 중 선택이 필요하면 질문한다. 기술적 사실은 코드·문서·실험으로 먼저 확인한다.
+At this stage, also read and apply [gsp-grilling](../gsp-grilling/SKILL.md). Ask when a design assumption lacks a basis in a user decision or a choice is needed among multiple acceptable contracts. First verify technical facts using code, documentation, or experiments.
 
-질문은 추천안과 함께 실제 사용자에게 전달하고, 답변에 의존하는 부분만 대기한다. 리뷰·작업 서브에이전트의 질문은 주 작업자가 취합해 묻는다. 기존 답변은 재사용한다.
+Present questions to the actual user with a recommendation, and hold only the parts dependent on the answer. The main worker gathers and asks questions from review and work subagents. Reuse existing answers.
 
-## 검토
+## Review
 
-- 모든 필수 요구사항에 담당 구성요소·작업·검증 방법이 있는가?
-- 데이터 흐름, 입력·출력, 오류 처리와 구성요소 경계가 일관적인가?
-- 실제 환경에서 의존성을 사용할 수 있고, 위험한 가정에 확인 근거가 있는가?
-- 병렬 작업의 파일 소유권·기준 상태·통합 순서가 충돌하지 않는가?
-- 남은 시간에 비해 불필요한 구조가 있거나 최종 검증 시간이 빠지지 않았는가?
+- Does every mandatory requirement have a responsible component, task, and verification method?
+- Are data flow, inputs and outputs, error handling, and component boundaries consistent?
+- Are dependencies usable in the actual environment, and is there verification evidence for risky assumptions?
+- Do file ownership, baseline state, and integration order for parallel work avoid conflicts?
+- Is there unnecessary structure given the remaining time, or is time for final verification missing?
 
-## 결과
+## Results
 
-판정은 검토 범위와 필요한 근거를 기준으로 한다. PASS는 차단 사항 없음, WARN은 비차단 제안·한계가 있음, FAIL은 필수 결함 또는 단계 진행에 필요한 결정·근거가 없음이다. 필수 근거 부재는 확인 대기로 표시하고 확정 결함과 구분한다. FAIL의 의존 작업·완료 판정은 보류하며, 무관한 작업은 계속할 수 있다.
+Base the verdict on the review scope and required evidence. PASS means no blockers; WARN means non-blocking suggestions or limitations; FAIL means a defect affecting mandatory requirements or missing decision or evidence needed to advance the stage. Mark missing required evidence as awaiting verification and distinguish it from confirmed defects. Hold dependent work and completion decisions for a FAIL; unrelated work may continue.
 
-결과에는 실제 읽은 원문·산출물 경로와 기준 상태, 실행한 확인, 발견 ID·차단 여부·관련 요구사항을 남긴다. 이전 PASS나 작성자 요약만 검토 근거로 쓰지 않는다. 검토 도중 내용이 바뀌면 변경 부분을 재확인한다.
+Record the paths and baseline state of the original sources and deliverables actually read, checks performed, finding IDs, blocking status, and related requirements. Do not use only a previous PASS or the author's summary as review evidence. If content changes during review, recheck the changed parts.
 
-파일을 수정하지 않고 PASS / WARN / FAIL, 근거가 있는 발견 사항과 수정 권고를 반환한다. 각 발견에 설계 위치·관련 요구사항 ID, 문제가 발생하는 조건과 영향을 적는다. 실행하지 않은 기술 검증은 미확인으로 남긴다.
+Without modifying files, return PASS / WARN / FAIL, evidence-backed findings, and recommendations for corrections. For each finding, record the design location, related requirement ID, conditions under which the problem occurs, and its impact. Leave technical verification that was not performed marked as unverified.
 
-주 작업자는 중요한 발견별 수정 위치·해당 설계 조건 또는 실험 재확인 결과·확인자를 남긴다. 차단 사항에 의존하는 구현은 해결 근거가 생길 때까지 보류하고, 결과를 바꾸는 사용자 결정만 확인한다. 전체 흐름의 다음 단계는 `gsp-development`다. 설계 리뷰만 요청받았다면 결과에서 멈춘다.
+For each important finding, the main worker records the correction location, the result of rechecking the relevant design condition or experiment, and the person who verified it. Hold implementation dependent on blockers until evidence of resolution exists, and confirm only user decisions that change the result. The next stage in the full workflow is `gsp-development`. If only a design review was requested, stop at the results.

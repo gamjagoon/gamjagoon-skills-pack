@@ -1,32 +1,32 @@
 ---
 name: gsp-requirements-review
-description: 원문과 작성된 요구사항을 대조해 누락·모순·검증 불가능한 완료 기준을 읽기 전용으로 검토합니다. 요구사항 초안이나 범위 변경을 검토할 때 사용합니다.
+description: Compare the original text with the written requirements in a read-only review for omissions, contradictions, and unverifiable completion criteria. Use when reviewing a requirements draft or a scope change.
 ---
 
-# 요구사항 리뷰
+# Requirements review
 
-입력은 사용자 원문·제공 자료·현재 요구사항과 미결정 목록이다. 원문 없이 누락 없음으로 판정하지 않는다. 원문이 없으면 원문 대조는 확인 대기로 남기고, 가능한 내부 일관성 검토와 구분한다. 설계나 구현을 대신 시작하지 않는다.
+Inputs are the user's original text, provided materials, current requirements, and list of unresolved decisions. Do not judge that there are no omissions without the original text. If it is unavailable, mark comparison with it as pending verification and distinguish it from any internal consistency review that can be performed. Do not start design or implementation in its place.
 
-## 모호함 확인 — grilling
+## Checking ambiguity — grilling
 
-이 단계에서는 [gsp-grilling](../gsp-grilling/SKILL.md)을 함께 읽고 적용한다. 원문과 요구사항의 충돌, 빠진 정책·기대 동작을 조사로 해소할 수 없으면 질문한다. 미결정을 임의의 정답으로 판정하지 않는다.
+At this stage, also read and apply [gsp-grilling](../gsp-grilling/SKILL.md). Ask questions if investigation cannot resolve conflicts between the original text and requirements, or missing policies or expected behavior. Do not treat an arbitrary answer as correct for an unresolved decision.
 
-질문은 추천안과 함께 실제 사용자에게 전달하고, 답변에 의존하는 부분만 대기한다. 리뷰·작업 서브에이전트의 질문은 주 작업자가 취합해 묻는다. 기존 답변은 재사용한다.
+Send the questions and recommendations to the actual user, and wait only on the parts that depend on the answers. The lead worker consolidates and asks questions from review and work subagents. Reuse existing answers.
 
-## 검토
+## Review
 
-- 원문의 필수 항목이 요구사항과 연결되는지 확인한다.
-- 불필요한 범위 확장, 서로 모순되는 조건, 빠진 오류·경계 조건을 찾는다.
-- 완료 기준을 실제로 관찰·검증할 수 있는지 확인한다.
-- 가정이 사실이나 사용자 결정으로 둔갑하지 않았는지 확인한다.
-- 남은 시간과 환경에서 필수 범위를 수행할 수 있는지 근거를 확인한다.
+- Check whether mandatory items in the original text are linked to requirements.
+- Find unnecessary scope expansion, mutually contradictory conditions, and missing error or boundary conditions.
+- Check whether completion criteria can actually be observed and verified.
+- Check that assumptions have not been presented as facts or user decisions.
+- Check the evidence that the mandatory scope can be performed with the remaining time and environment.
 
-## 결과
+## Results
 
-판정은 검토 범위와 필요한 근거를 기준으로 한다. PASS는 차단 사항 없음, WARN은 비차단 제안·한계가 있음, FAIL은 필수 결함 또는 단계 진행에 필요한 결정·근거가 없음이다. 필수 근거 부재는 확인 대기로 표시하고 확정 결함과 구분한다. FAIL의 의존 작업·완료 판정은 보류하며, 무관한 작업은 계속할 수 있다.
+Base the verdict on the review scope and required evidence. PASS means no blockers; WARN means nonblocking suggestions or limitations exist; FAIL means a defect affecting mandatory requirements exists or a decision or evidence needed to proceed to the next stage is missing. Mark missing mandatory evidence as pending verification and distinguish it from a confirmed defect. Hold work and completion judgments dependent on a FAIL; unrelated work may continue.
 
-결과에는 실제 읽은 원문·산출물 경로와 기준 상태, 실행한 확인, 발견 ID·차단 여부·관련 요구사항을 남긴다. 이전 PASS나 작성자 요약만 검토 근거로 쓰지 않는다. 검토 도중 내용이 바뀌면 변경 부분을 재확인한다.
+Record the paths of the original text and deliverables actually read, their baseline state, checks performed, finding IDs, whether each is blocking, and related requirements. Do not rely only on a previous PASS or the author's summary as review evidence. If content changes during review, recheck the changed parts.
 
-읽기 전용 리뷰는 원본 문서를 수정하지 않고 PASS / WARN / FAIL과 발견 사항을 반환한다. 각 발견에 요구사항 ID·원문 위치, 문제 조건, 영향과 수정 제안을 붙인다. 미확인 우려는 결함과 구분한다. 근거 없는 점수나 반복적인 형식 지적은 만들지 않는다.
+A read-only review returns PASS / WARN / FAIL and findings without modifying the original documents. For each finding, include the requirement ID and original-text location, problem conditions, impact, and suggested correction. Distinguish unverified concerns from defects. Do not invent unsupported scores or repetitive formatting criticisms.
 
-주 작업자는 중요한 발견별 수정 위치·원문 재대조 결과·확인자를 남긴다. 미해결 차단 항목에 의존하는 설계는 보류하고, 해결 근거가 생긴 부분부터 다음 단계로 전달한다. 사용자 결정이 필요한 문제만 질문하며 리뷰마다 승인을 기다리지 않는다. 전체 흐름의 다음 단계는 `gsp-architecture`다. 리뷰만 요청받았다면 결과를 반환하고 멈춘다.
+The lead worker records the correction location, result of rechecking against the original text, and verifier for each important finding. Hold designs dependent on unresolved blockers, and pass portions to the next stage as evidence of resolution becomes available. Ask only about issues requiring user decisions; do not wait for approval after every review. The next stage in the overall flow is `gsp-architecture`. If asked only for a review, return the result and stop.

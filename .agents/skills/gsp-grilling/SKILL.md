@@ -1,34 +1,34 @@
 ---
 name: gsp-grilling
-description: 요구사항·아키텍처·개발과 각 리뷰에서 사용자 결정이 필요한 모호함을 질문 라운드로 해소합니다. 결과를 바꾸는 미결정이 있을 때 사용하며, 조사로 확인할 사실이나 이미 답한 결정은 다시 묻지 않습니다.
+description: Resolve ambiguities requiring user decisions through question rounds during requirements, architecture, development, and their reviews. Use when unresolved decisions would change the outcome; do not ask again about facts to investigate or decisions already answered.
 ---
 
-# Grilling — 모호한 결정 질문하기
+# Grilling — asking about ambiguous decisions
 
-여섯 작업 단계가 함께 사용하는 보조 스킬이다. grilling의 의존 관계별 질문 라운드를 이 팩의 단계 진행·독립 리뷰에 맞게 적용한다. 별도의 일곱 번째 작업 단계가 아니며 외부 grilling 설치가 필요 없다.
+This is a supporting skill shared by the six work stages. Apply grilling's question rounds by dependency to this pack's stage progression and independent reviews. It is not a separate seventh work stage and does not require an external grilling installation.
 
-## 먼저 구분하기
+## Distinguish first
 
-- 원문·기존 답변·파일·실행으로 확인할 사실과 사용자만 정할 의도·선호·정책을 구분한다. 사실은 먼저 조사한다. 독립적인 조사는 가능한 경우 읽기 전용 서브에이전트에 맡기고, 사용할 수 없으면 직접 확인한다.
-- 같은 요청을 여러 의미로 해석할 수 있고 범위·기대 동작·데이터 처리·외부 연동·완료 기준이 달라지면 질문한다. 미결정을 가정으로 적어 놓는 것만으로 확정하지 않는다.
-- 이미 정해진 내용과 그 범위 안의 통상적인 내부 구현 선택은 반복해서 묻지 않는다. 사용자가 선택을 위임했다면 위임 범위에서 결정하고 이유를 기록한다.
+- Distinguish facts verifiable from the original text, existing answers, files, or execution from intentions, preferences, and policies that only the user can decide. Investigate facts first. Delegate independent investigation to read-only subagents when possible; check directly if they are unavailable.
+- Ask when the same request can have multiple interpretations that change the scope, expected behavior, data handling, external integrations, or completion criteria. Do not settle an unresolved decision merely by recording it as an assumption.
+- Do not repeatedly ask about already decided matters or routine internal implementation choices within that scope. If the user has delegated a choice, decide within the delegated scope and record the reason.
 
-## 질문 라운드
+## Question rounds
 
-1. 미결정과 선행 결정을 연결한다. 선행 답변·조사가 끝난 질문들을 이번 라운드에 함께 묻는다. 답변에 따라 의미가 달라지는 후속 질문은 다음 라운드로 미룬다. 항목이 많으면 읽기 쉬운 묶음으로 나누되 의존 질문을 앞당기지 않는다.
-2. 각 질문에 Q1처럼 번호, 무엇이 불명확한지, 결과에 미치는 영향, 선택지와 추천안·이유를 붙인다. 선택지로 표현하기 어렵다면 짧은 자유 응답 질문을 쓴다.
-3. 질문 목록을 문서에만 적고 넘어가지 말고 실제 사용자에게 전달한다. 사용 가능한 질문 도구가 있으면 사용하고, 없으면 대화에 질문한다. 추천안은 사용자의 답변이 아니다.
-4. 답변이 필요한 부분과 그에 의존하는 작업은 대기한다. 답변과 무관한 조사·구현은 계속할 수 있다. 무응답·경과 시간·예산 부족을 동의로 간주하지 않는다.
-5. 답변을 받으면 결정과 이해한 내용을 짧게 확인하고 의존 관계를 다시 살핀다. 부분 답변·모순·새 모호함은 다음 라운드에 묻는다. 해당 부분의 미결정이 해소되면 기존 허용 범위에서 재개하며 단계마다 별도 승인을 추가하지 않는다.
+1. Connect unresolved decisions to prerequisite decisions. Ask together in this round the questions whose prerequisite answers and investigation are complete. Defer follow-up questions whose meaning depends on the answers to the next round. If there are many items, split them into readable groups without bringing dependent questions forward.
+2. Give each question a number such as Q1, what is unclear, its effect on the outcome, options, and a recommendation with its reason. If options are difficult to express, use a short free-response question.
+3. Do not merely write the list of questions in a document and move on; send it to the actual user. Use an available question tool, or ask in conversation if none is available. A recommendation is not the user's answer.
+4. Wait on the parts that need answers and work that depends on them. Investigation and implementation unrelated to the answers may continue. Do not treat no response, elapsed time, or insufficient budget as consent.
+5. After receiving answers, briefly confirm the decisions and your understanding, and revisit dependencies. Ask about partial answers, contradictions, and new ambiguities in the next round. Once the unresolved decisions for a part are resolved, resume within the existing authorized scope without adding separate approval at every stage.
 
-질문 예시:
+Example question:
 
-> ❓ Q1 — 같은 이름의 출력 파일이 있으면 덮어쓸까요, 오류로 종료할까요?
-> ➡️ 추천: 오류로 종료. 기존 결과를 보존할 수 있습니다.
+> ❓ Q1 — If an output file with the same name exists, should it be overwritten or should execution stop with an error?
+> ➡️ Recommendation: Stop with an error. This preserves the existing result.
 
-## 리뷰·기록·재개
+## Review, recording, and resumption
 
-- 리뷰 서브에이전트는 질문·선택지·추천 이유·영향받는 요구사항을 주 작업자에게 전달한다. 주 작업자가 중복을 정리해 실제 사용자에게 묻고 답변을 해당 작업자에게 전달한다. 주 작업자 없이 직접 리뷰하는 경우에는 직접 질문한다.
-- 사용자 판단이 필요한 모호함과 재현된 구현 결함을 구분한다. 이미 명확한 계약을 어긴 버그의 수정 여부를 재승인받지 않는다. 모호한 기대값을 정답으로 가정해 PASS나 확정 결함을 만들지 않는다.
-- 주 작업자는 기존 작업 기록에 질문 ID·관련 요구사항·답변 또는 대기 상태·결정·영향받는 단계를 남긴다. 같은 의미의 질문은 이후 단계에서 답변을 재사용하고, 조건이 달라졌을 때만 바뀐 부분을 묻는다. 단순 질의응답에는 기록 파일을 새로 만들지 않는다.
-- 답변 때문에 요구사항·인터페이스·완료 기준이 바뀌면 영향받는 설계·코드·검증·리뷰만 갱신한다. 필수 결정이 미해결이면 해당 부분을 완료로 선언하지 않는다.
+- Review subagents send the lead worker their questions, options, reasons for recommendations, and affected requirements. The lead worker removes duplicates, asks the actual user, and conveys the answers to the relevant worker. When reviewing directly without a lead worker, ask directly.
+- Distinguish ambiguities requiring user judgment from reproduced implementation defects. Do not seek renewed approval to fix a bug that violates an already clear contract. Do not assume an ambiguous expected value is correct and produce a PASS or confirmed defect.
+- The lead worker records the question ID, related requirements, answer or waiting status, decision, and affected stages in the existing work record. Reuse answers to questions with the same meaning in later stages; ask only about changed parts when conditions change. Do not create a new record file for simple questions and answers.
+- If answers change requirements, interfaces, or completion criteria, update only the affected design, code, verification, and reviews. If a mandatory decision remains unresolved, do not declare that part complete.

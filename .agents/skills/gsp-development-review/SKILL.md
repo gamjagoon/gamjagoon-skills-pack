@@ -1,34 +1,34 @@
 ---
 name: gsp-development-review
-description: 구현 결과를 원문 요구사항·설계·실제 실행 근거와 대조해 결함과 회귀를 읽기 전용으로 검토합니다. 구현 후 완료 여부를 판단하거나 코드 리뷰를 요청할 때 사용합니다.
+description: Review defects and regressions read-only by comparing implementation results with the original requirements, design, and evidence from actual execution. Use when judging completion after implementation or requesting a code review.
 ---
 
-# 개발 리뷰
+# Development review
 
-입력은 원문, 요구사항·설계, 변경 파일과 실제 검증 결과다. diff만 보지 말고 영향받는 호출부와 완료 기준도 확인한다. 리뷰 자체는 읽기 전용이다. 테스트가 파일을 쓰면 별도 격리 공간을 사용한다.
+Inputs are the original text, requirements and design, changed files, and actual verification results. Check affected callers and completion criteria as well as the diff. The review itself is read-only. If tests write files, use a separate isolated space.
 
-## 모호함 확인 — grilling
+## Check ambiguity — grilling
 
-이 단계에서는 [gsp-grilling](../gsp-grilling/SKILL.md)을 함께 읽고 적용한다. 기대 동작이 모호하거나 수정안에 사용자 정책 선택이 필요하면 질문한다. 명확한 계약 위반은 결함으로 보고하며, 수정 여부를 다시 승인받지 않는다.
+At this stage, also read and apply [gsp-grilling](../gsp-grilling/SKILL.md). Ask when expected behavior is ambiguous or a proposed fix requires the user to choose a policy. Report clear contract violations as defects, and do not ask for approval again to fix them.
 
-질문은 추천안과 함께 실제 사용자에게 전달하고, 답변에 의존하는 부분만 대기한다. 리뷰·작업 서브에이전트의 질문은 주 작업자가 취합해 묻는다. 기존 답변은 재사용한다.
+Bring questions to the actual user with a recommendation, and wait only on the parts that depend on the answer. The main worker collects and asks questions from review and work subagents. Reuse existing answers.
 
-## 검토
+## Review
 
-- 필수 요구사항과 정상·오류·경계 동작이 실제로 구현됐는지 확인한다.
-- 설계와 달라진 부분의 이유와 영향을 확인한다.
-- 재현 가능한 결함, 기존 동작 회귀, 데이터 손실·경계 처리 문제를 우선한다.
-- 원문·기존 계약에서 기대값을 먼저 정하고, 구현과 함께 작성된 테스트도 그 기대값과 대조한다. 통과하는 테스트가 같은 오해를 반복할 수 있다.
-- 실제 사용자 진입점과 영향받는 기존 회귀·통합 경로를 확인한다. 무엇을 실행했는지와 미실행 이유를 기록하고 모의 결과·정적 확인·실제 실행을 구분한다.
+- Check whether mandatory requirements and normal, error, and boundary behavior are actually implemented.
+- Check the reasons for and effects of departures from the design.
+- Prioritize reproducible defects, regressions in existing behavior, and data loss or boundary-handling problems.
+- Establish expectations first from the original text and existing contracts, and compare tests written alongside the implementation against those expectations too. Passing tests can repeat the same misunderstanding.
+- Check the actual user entry point and affected existing regression and integration paths. Record what was run and why items were not run, and distinguish mocked results, static checks, and actual execution.
 
-## 결과와 수정
+## Results and fixes
 
-판정은 검토 범위와 필요한 근거를 기준으로 한다. PASS는 차단 사항 없음, WARN은 비차단 제안·한계가 있음, FAIL은 필수 결함 또는 단계 진행에 필요한 결정·근거가 없음이다. 필수 근거 부재는 확인 대기로 표시하고 확정 결함과 구분한다. FAIL의 의존 작업·완료 판정은 보류하며, 무관한 작업은 계속할 수 있다.
+Base the verdict on the review scope and required evidence. PASS means no blockers; WARN means there are non-blocking suggestions or limitations; FAIL means there is a defect affecting mandatory requirements or a decision or evidence needed to proceed to the next stage is missing. Mark missing required evidence as pending verification and distinguish it from a confirmed defect. Hold work dependent on a FAIL and the completion verdict; unrelated work may continue.
 
-결과에는 실제 읽은 원문·산출물 경로와 기준 상태, 실행한 확인, 발견 ID·차단 여부·관련 요구사항을 남긴다. 이전 PASS나 작성자 요약만 검토 근거로 쓰지 않는다. 검토 도중 내용이 바뀌면 변경 부분을 재확인한다.
+Record the paths and baseline state of the original text and artifacts actually read, checks performed, finding IDs, whether each is blocking, and related requirements. Do not use only an earlier PASS or the author's summary as review evidence. If content changes during review, recheck the changed parts.
 
-PASS / WARN / FAIL과 발견 사항을 반환한다. 각 결함에 파일·위치, 재현 조건 또는 방법, 사용자 영향과 수정 권고를 적는다. 추측한 우려를 확정 결함으로 쓰지 않는다. 결함이 없으면 그 사실과 검토 범위·미실행 항목을 적는다.
+Return PASS / WARN / FAIL and findings. For each defect, record the file and location, reproduction conditions or method, user impact, and recommended fix. Do not present speculative concerns as confirmed defects. If there are no defects, record that fact, the review scope, and items not run.
 
-주 작업자는 중요한 발견별 수정 위치, 원래 실패 입력·재현 조건과 영향받는 회귀 검사의 재실행 결과, 확인자를 남긴다. 정상 경로 테스트만 통과했다고 결함을 닫지 않는다. 수정 후 독립 재검토가 없으면 작성자 재검증과 구분해 알린다. 새로운 위험이 생기지 않았다면 전체 리뷰를 관성적으로 반복하지 않는다. 최종 실행법, 완료 항목, 실제 검증 결과와 남은 한계를 사용자에게 전달한다. 배포·외부 전송·push는 해당 작업에서 사용자에게 허용된 범위 안에서만 한다.
+For each significant finding, the main worker records the fix location, results of rerunning the original failing input or reproduction conditions and affected regression checks, and the person who verified them. Do not close a defect merely because normal-path tests pass. If there is no independent re-review after a fix, communicate this separately from author revalidation. Do not repeat the entire review by inertia if no new risk has arisen. Tell the user the final execution instructions, completed items, actual verification results, and remaining limitations. Deploy, transmit externally, or push only within the scope authorized by the user for that task.
 
-코드만 검토해 달라는 요청은 그 범위에서 판정하고 실행 성공을 주장하지 않는다. 전체 작업의 완료 여부는 현재 필수 완료 기준의 실제 근거와 미해결 차단 사항을 따로 확인한다.
+Judge a request to review only code within that scope and do not claim successful execution. Separately check actual evidence for the current mandatory completion criteria and unresolved blockers when judging completion of the entire task.

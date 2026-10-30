@@ -1,30 +1,30 @@
 ---
 name: gsp-architecture
-description: 검토된 요구사항을 최소 구조·인터페이스·구현 작업과 검증 계획으로 바꿉니다. 요구사항을 만족하는 설계를 작성하거나 변경할 때 사용합니다.
+description: Turn reviewed requirements into a minimal structure, interfaces, implementation tasks, and verification plan. Use when creating or changing a design to meet requirements.
 ---
 
-# 아키텍처 작성
+# Architecture design
 
-현재 요구사항, 요구사항 리뷰 결과, 기존 코드 구조·실행 환경을 읽는다. 이전 리뷰가 현재 요구사항을 검토한 결과인지 확인하고, 차단 사항이 남은 부분의 설계를 확정하지 않는다. 미해결 필수 결정에 의존하는 설계를 임의로 확정하지 않는다. 기존 프로젝트의 구조를 먼저 활용한다.
+Read the current requirements, requirements review results, existing code structure, and execution environment. Check whether the previous review covered the current requirements, and do not finalize the design of areas with remaining blockers. Do not arbitrarily finalize a design that depends on unresolved required decisions. First use the existing project's structure.
 
-## 모호함 확인 — grilling
+## Check ambiguity — grilling
 
-이 단계에서는 [gsp-grilling](../gsp-grilling/SKILL.md)을 함께 읽고 적용한다. 저장·배포·외부 연동·보안이나 호환성 선택이 사용자에게 다른 결과를 만들면 질문한다. 답변에 의존하는 구조·인터페이스를 확정하지 않는다.
+At this stage, also read and apply [gsp-grilling](../gsp-grilling/SKILL.md). Ask when choices about storage, deployment, external integration, security, or compatibility produce different outcomes for the user. Do not finalize structures or interfaces that depend on an answer.
 
-질문은 추천안과 함께 실제 사용자에게 전달하고, 답변에 의존하는 부분만 대기한다. 리뷰·작업 서브에이전트의 질문은 주 작업자가 취합해 묻는다. 기존 답변은 재사용한다.
+Present questions to the actual user with a recommendation, and hold only the parts dependent on the answer. The main worker gathers and asks questions from review and work subagents. Reuse existing answers.
 
-## 작성할 내용
+## What to document
 
-기존 설계 문서 또는 `TASK.md`의 설계 절에 다음을 짧게 기록한다.
+Briefly record the following in an existing design document or the design section of `TASK.md`:
 
-1. 입력부터 결과까지의 핵심 흐름과 필요한 구성요소.
-2. 구성요소별 책임, 데이터·함수·API 경계, 오류 처리.
-3. 요구사항 ID → 담당 파일·구성요소 → 구현 작업 → 완료 확인 방법. 기존 동작과 영향받는 호출부·통합 경로도 연결한다.
-4. 위험한 가정과 이를 확인할 가장 작은 실험.
-5. 테스트·실행 방법, 필요한 의존성, 병렬로 나눌 수 있는 범위와 통합 담당자.
+1. The core flow from input to result and the required components.
+2. Each component's responsibilities, data, function, and API boundaries, and error handling.
+3. Requirement ID → responsible file or component → implementation task → method of confirming completion. Also link existing behavior and affected callers and integration paths.
+4. Risky assumptions and the smallest experiment to check them.
+5. Test and execution methods, required dependencies, scopes that can be split for parallel work, and the integration owner.
 
-중요한 선택에는 선택 이유와 실제로 고려할 대안을 적는다. 작은 과제에 계층·서비스·프레임워크를 불필요하게 추가하지 않는다. 코드나 실행 근거 없이 성능·보안·호환성을 보장하지 않는다. 불확실한 의존성 실험은 개발 스킬의 격리 규칙을 따른다.
+For important choices, record the rationale and alternatives to actually consider. Do not add unnecessary layers, services, or frameworks to a small task. Do not guarantee performance, security, or compatibility without code or execution evidence. Follow the development skill's isolation rules for experiments with uncertain dependencies.
 
-## 완료와 전달
+## Completion and handoff
 
-각 필수 요구사항에 구현 위치와 검증 방법이 연결되고, 바로 착수할 작업과 의존성이 드러나면 완료다. 각 작업에는 담당 범위, 선행 작업, 완료 확인과 통합 담당자를 적는다. 실험이 필요한 가정은 확인 결과 또는 미확인 이유와 영향 범위를 함께 전달한다. 전체 흐름에서는 `gsp-architecture-review`에 요구사항·설계·실험 근거를 전달한다. 설계만 요청받았으면 구현하지 않는다.
+The design is complete when every mandatory requirement is linked to an implementation location and verification method, and the tasks ready to start and their dependencies are clear. For each task, record its scope, prerequisites, completion check, and integration owner. For assumptions requiring experiments, also hand off the verification results or the reason they remain unverified and the affected scope. In the full workflow, hand the requirements, design, and experimental evidence to `gsp-architecture-review`. If only a design was requested, do not implement it.

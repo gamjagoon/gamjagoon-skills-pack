@@ -1,33 +1,33 @@
 ---
 name: gsp-requirements
-description: 사용자의 작업 요청을 원문 근거와 관찰 가능한 완료 기준이 있는 요구사항으로 정리합니다. 새 기능·프로젝트를 시작하거나 요구사항 문서를 작성할 때 사용합니다. 설계나 구현 결과 리뷰에는 사용하지 않습니다.
+description: Organize a user's work request into requirements supported by the original text and observable completion criteria. Use when starting a new feature or project or writing a requirements document. Do not use for reviews of design or implementation results.
 ---
 
-# 요구사항 작성
+# Writing requirements
 
-사용자 요청, 제공 자료, 기존 프로젝트 상태와 기존 요구사항을 읽는다. 기존 작업의 계속인지 새 요청인지 먼저 구분하고, 새 요청에 이전 완료 판정·마감을 재사용하지 않는다. 파일·도구에서 확인할 수 있는 사실은 직접 조사하고, 결과를 바꾸는 미결정만 질문한다. 이미 결정된 내용을 다시 승인받지 않는다.
+Read the user's request, provided materials, existing project state, and existing requirements. First distinguish a continuation of existing work from a new request; do not reuse a previous completion judgment or deadline for a new request. Investigate facts that can be checked in files or tools directly, and ask only about unresolved decisions that change the outcome. Do not seek approval again for what has already been decided.
 
-## 모호함 확인 — grilling
+## Checking ambiguity — grilling
 
-이 단계에서는 [gsp-grilling](../gsp-grilling/SKILL.md)을 함께 읽고 적용한다. 목표·대상 사용자·범위·완료 기준을 여러 의미로 해석할 수 있으면 질문하고, 답변 전에는 해당 요구사항을 확정하지 않는다.
+At this stage, also read and apply [gsp-grilling](../gsp-grilling/SKILL.md). If the goal, target users, scope, or completion criteria can be interpreted in multiple ways, ask questions and do not finalize the affected requirements before receiving answers.
 
-질문은 추천안과 함께 실제 사용자에게 전달하고, 답변에 의존하는 부분만 대기한다. 리뷰·작업 서브에이전트의 질문은 주 작업자가 취합해 묻는다. 기존 답변은 재사용한다.
+Send the questions and recommendations to the actual user, and wait only on the parts that depend on the answers. The lead worker consolidates and asks questions from review and work subagents. Reuse existing answers.
 
-## 작성할 내용
+## What to write
 
-작업 기록은 기존 문서 위치를 우선하고, 없으면 `TASK.md`의 요구사항 절을 사용한다.
+Prefer the existing document location for the work record; if none exists, use the requirements section of `TASK.md`.
 
-- 목표, 대상 사용자, 입력·출력, 필수 범위와 제외 범위.
-- 원문의 모든 필수 항목을 R1, R2처럼 식별하고 출처 또는 원문 위치를 연결한다.
-- 각 항목에 실제 입력·조건 → 기대 동작·결과 → 확인 방법을 붙인다. 기존 기능 변경이면 보존해야 할 기존 동작도 포함한다. “테스트 통과”만을 완료 기준으로 쓰지 않는다.
-- 환경·시간·의존성 제약, 확인된 사실, 가정과 미결정을 구분한다.
+- Goal, target users, inputs and outputs, required scope, and exclusions.
+- Identify every mandatory item in the original text as R1, R2, and so on, and link it to its source or location in the original text.
+- For each item, provide actual input or conditions → expected behavior or result → verification method. For changes to existing functionality, include existing behavior that must be preserved. Do not use “tests pass” alone as a completion criterion.
+- Distinguish environment, time, and dependency constraints, confirmed facts, assumptions, and unresolved decisions.
 
-| ID | 필수 요구사항 | 원문 근거 | 완료 기준·확인 방법 | 상태 |
+| ID | Mandatory requirement | Original-text evidence | Completion criteria and verification method | Status |
 | --- | --- | --- | --- | --- |
-| R1 | 원문에 근거한 기능 | 원문 위치 | 실제 입력과 기대 결과 | 미구현 |
+| R1 | Functionality based on the original text | Location in the original text | Actual input and expected result | Not implemented |
 
-구현 기술을 요구사항으로 임의 확정하거나 원문에 없는 기능을 추가하지 않는다. 확인할 수 없는 수치·허용 범위는 사실처럼 쓰지 않는다.
+Do not arbitrarily settle implementation technology as a requirement or add functionality absent from the original text. Do not state unverifiable numbers or tolerances as facts.
 
-## 완료와 전달
+## Completion and handoff
 
-원문과 요구사항 ID가 연결되고 완료 기준을 검증할 수 있으면 `gsp-requirements-review`에 원문·요구사항 경로·미결정을 전달한다. 중요한 미결정이 남아 있으면 그 항목과 의존 범위를 표시하고, 전체 준비가 끝난 것처럼 처리하지 않는다. 변경 요청은 기존 항목·결정 이력을 보존하며 변경분과 영향받는 후속 단계를 표시한다. 사용자가 요구사항 작성만 요청했다면 이 산출물에서 멈춘다.
+Once the original text and requirement IDs are linked and the completion criteria can be verified, pass the original text, requirements path, and unresolved decisions to `gsp-requirements-review`. If important decisions remain unresolved, mark those items and their dependent scope; do not treat all preparation as complete. For change requests, preserve existing items and decision history, and identify the changes and affected downstream stages. If the user requested only requirements writing, stop with this deliverable.

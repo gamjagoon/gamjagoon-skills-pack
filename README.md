@@ -1,8 +1,9 @@
 # gamjagoon-skills-pack
 
-**AGENTS.md + six workflow skills and a shared grilling skill.**
+**AGENTS.md + 6단계 작업 스킬 + 공통 질문 스킬**
 
 `AGENTS.md`에 공통 작업 지침을 두고, 각 단계를 별도 스킬로 나눈 팩입니다.
+스킬의 설명·본문·참조 문서는 영어로 작성하며, 이 README에서는 한국어로 사용법과 구성을 설명합니다.
 `install.sh`가 Markdown 파일을 프로젝트에 설치합니다. Python·uv·npm 패키지는 필요 없습니다.
 
 ## 사용하기
@@ -105,4 +106,4 @@ Linux/WSL의 Bash와 기본 Unix 도구를 사용합니다. 스크립트는 다�
 - 같은 파일은 다시 쓰지 않으며 백업은 `.gsp-backups/`에 남깁니다.
 - 사용자 홈·전역 Codex 설정 경로와 관리 대상 심볼릭 링크는 거부합니다.
 
-[MIT License](LICENSE)
+[MIT 라이선스](LICENSE)

@@ -1,35 +1,35 @@
 ---
 name: gsp-development
-description: 검토된 요구사항과 아키텍처에 따라 기능을 구현하고 실제 실행으로 검증합니다. 독립적인 조사·실험은 작업 공간을 분리하며 기존 변경을 보존합니다.
+description: Implement features according to reviewed requirements and architecture, and verify them through actual execution. Isolate workspaces for independent investigations and experiments, and preserve existing changes.
 ---
 
-# 개발
+# Development
 
-원문 요구사항, 현재 설계·작업 목록, 두 리뷰 결과와 기존 변경을 확인한다. 리뷰가 현재 산출물에 대한 것인지 확인하고, 미해결 차단 사항에 의존하는 구현은 시작하지 않는다. 승인된 범위에서 핵심 흐름부터 구현하고 작은 단위로 실제 실행한다. 단순한 변경은 규모에 맞게 처리하고 불필요한 계획 문서를 늘리지 않는다.
+Check the original requirements, current design and task list, both review results, and existing changes. Confirm that the reviews concern the current artifacts, and do not start implementation that depends on unresolved blockers. Within the approved scope, implement the core flow first and execute it in small units. Handle simple changes in proportion to their size and do not add unnecessary planning documents.
 
-## 모호함 확인 — grilling
+## Check ambiguity — grilling
 
-이 단계에서는 [gsp-grilling](../gsp-grilling/SKILL.md)을 함께 읽고 적용한다. 구현 중 미정인 경계 동작·데이터 처리 정책·기존 동작과의 충돌을 발견하면 질문한다. 답변 전에 해당 동작을 임의로 구현하거나 테스트 기대값으로 고정하지 않는다.
+At this stage, also read and apply [gsp-grilling](../gsp-grilling/SKILL.md). Ask when implementation reveals undecided boundary behavior, data handling policy, or conflicts with existing behavior. Before an answer, do not arbitrarily implement that behavior or fix it as a test expectation.
 
-질문은 추천안과 함께 실제 사용자에게 전달하고, 답변에 의존하는 부분만 대기한다. 리뷰·작업 서브에이전트의 질문은 주 작업자가 취합해 묻는다. 기존 답변은 재사용한다.
+Bring questions to the actual user with a recommendation, and wait only on the parts that depend on the answer. The main worker collects and asks questions from review and work subagents. Reuse existing answers.
 
-## 구현과 확인
+## Implementation and verification
 
-기존 프로젝트에서는 사용법·빌드/테스트 명령·관련 기존 검사를 먼저 찾는다. 필요하면 변경 전 실행으로 기존 실패를 기록하고 새 회귀와 구분한다. 테스트 체계가 없으면 작업 규모에 맞는 실행 사례를 준비하며 새 프레임워크를 기본으로 추가하지 않는다.
+In an existing project, first find usage instructions, build and test commands, and relevant existing checks. If needed, run them before changes to record existing failures and distinguish them from new regressions. If there is no test system, prepare execution cases appropriate to the size of the work and do not add a new framework by default.
 
-- 먼저 사용자가 관찰할 수 있는 최소 기능을 끝까지 실행한다.
-- 각 변경을 요구사항 ID와 연결하고, 원문·기존 계약에서 정한 기대값으로 정상·오류·경계 사례를 확인한다. 구현 결과를 그대로 기대값으로 삼지 않는다.
-- 사용자 진입점의 실제 흐름과 영향받는 기존 회귀·통합 경로를 검증한다. 외부 환경 때문에 못 돌린 필수 확인은 이유·영향을 기록하고 완료로 표시하지 않는다.
-- 확인된 실패 원인을 바탕으로 수정한다. 같은 국소 수리가 실패하면 시도·재현·오류 근거를 적합한 역할에 넘긴다.
-- 관련 검사가 통과하면 같은 검사를 근거 없이 반복하지 않는다.
-- 기존 사용자 변경과 다른 작업자의 파일을 보존한다. 승인 없이 범위·필수 기능을 삭제하지 않는다.
+- First, execute the minimum user-observable functionality end to end.
+- Connect each change to a requirement ID and check normal, error, and boundary cases against expectations established by the original text and existing contracts. Do not take the implementation result itself as the expectation.
+- Verify the actual flow through the user entry point and affected existing regression and integration paths. Record the reason and impact for required checks that could not be run because of the external environment, and do not mark them complete.
+- Fix issues based on confirmed causes of failure. If the same localized repair fails, hand the attempt, reproduction, and error evidence to the appropriate role.
+- Once relevant checks pass, do not repeat the same checks without a reason.
+- Preserve existing user changes and other workers' files. Do not remove scope or required functionality without approval.
 
-## 병렬 조사와 실험
+## Parallel investigation and experiments
 
-독립적인 작업만 병렬화한다. 조사·사실 추출은 읽기 전용으로 공유하고, 쓰기 실험은 별도 worktree 또는 허용 파일만 복사한 디렉터리에서 수행한다. 병렬 작업을 시작할 때 [격리·환경·통합 절차](references/parallel-work.md)를 읽는다.
+Parallelize only independent work. Share investigation and fact extraction as read-only work, and conduct experiments that write files in a separate worktree or a directory containing only permitted copied files. When starting parallel work, read the [isolation, environment, and integration procedure](references/parallel-work.md).
 
-할당마다 목표·입력 근거·담당 파일·실제 cwd·완료 기준·반환 결과를 명시한다. 출력·가상환경·캐시·포트도 분리한다. worktree는 보안 경계가 아니며 서브에이전트가 자동으로 독립 cwd를 갖는다고 가정하지 않는다. 주 작업자가 검증된 변경만 통합하고 관련 검사를 다시 수행한다.
+For each assignment, specify the objective, input evidence, owned files, actual cwd, completion criteria, and results to return. Also isolate outputs, virtual environments, caches, and ports. A worktree is not a security boundary, and do not assume subagents automatically have an independent cwd. The main worker integrates only verified changes and reruns relevant checks.
 
-## 완료와 전달
+## Completion and handoff
 
-현재 작업 기록에 요구사항별 실제 입력·기대 결과·관찰 결과, 실행 명령, 변경 파일과 미실행 검증을 연결한다. 설계와 달라졌다면 이유와 영향을 적고 관련 리뷰만 다시 확인한다. 기능 구현과 확인이 끝나면 `gsp-development-review`에 원문·설계·변경·실행 근거를 전달한다. 테스트 통과를 사용자 환경의 성공으로 확대하지 않는다.
+In the current work record, connect each requirement to actual inputs, expected results, observed results, commands run, changed files, and unrun verification. If the implementation differs from the design, record the reason and impact and recheck only the relevant reviews. Once implementation and verification of the functionality are complete, hand the original text, design, changes, and execution evidence to `gsp-development-review`. Do not treat passing tests as proof of success in the user's environment.
