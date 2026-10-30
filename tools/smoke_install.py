@@ -39,6 +39,12 @@ def main() -> None:
         run(executable, "init", str(project), "--dry-run")
         assert not project.exists(), "dry-run created the target"
         run(executable, "init", str(project), "--minutes", "180")
+        run(executable, "keyboard", str(project), "--dry-run")
+        assert not (project / ".codex/config.toml").exists()
+        run(executable, "keyboard", str(project))
+        assert (
+            'submit = ["alt-enter", "ctrl-enter"]' in (project / ".codex/config.toml").read_text()
+        )
         assert "180" in (project / "TASK.md").read_text()
         assert "NOT_RUN" in run(executable, "doctor", str(project))
         assert run(executable, "prompt", "start").strip()

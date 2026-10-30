@@ -36,6 +36,27 @@ uvx --from git+https://github.com/gamjagoon/gamjagoon-skills-pack.git@v0.1.0 gsp
 
 이후 명령도 같은 `uvx --from ... gsp` 형식으로 실행하거나 `uv tool install`을 사용하세요.
 
+## Enter로 줄바꿈하기
+
+터미널 Codex CLI에서 Enter 오전송을 줄이고 싶으면 프로젝트에 다음 설정을 적용하세요.
+기본 `init`에는 입력 키 변경을 포함하지 않습니다.
+
+```bash
+gsp keyboard ./my-project --dry-run
+gsp keyboard ./my-project
+```
+
+| 키 | 동작 |
+| --- | --- |
+| Enter, Ctrl+J | 줄바꿈 |
+| Alt+Enter | 전송 |
+| Ctrl+Enter | 키를 구분해서 전달하는 터미널에서 전송 |
+
+프로젝트 `.codex/config.toml`의 입력 키 두 항목만 수정하고 기존 파일은 백업합니다.
+Codex CLI 0.165.0의 설정 형식을 기준으로 합니다. 실제 터미널의 키 전달과 프로젝트
+신뢰 상태는 별도 확인이 필요합니다. 자세한 내용과 수동 설정은 [줄바꿈 안내](docs/keyboard.ko.md)를 참고하세요.
+이 저장소 자체에도 같은 프로젝트 로컬 줄바꿈 설정을 포함했습니다.
+
 ## 어떤 순서로 쓰나요?
 
 | 단계 | 명령 | 확인할 것 |
@@ -75,7 +96,8 @@ my-project/
 
 기본 구성은 직접 작성한 워크플로 스킬 하나와 프롬프트·리뷰어입니다.
 **외부 스킬은 기본으로 설치하지 않습니다.** 글로벌 Codex 설정, 모델, 추론 강도,
-권한을 변경하지 않습니다. 리뷰어의 실제 모델은 Codex의 부모·역할 기본 설정을 따릅니다.
+권한을 변경하지 않습니다. 선택 `keyboard` 명령은 프로젝트 입력 키만 설정합니다.
+리뷰어의 실제 모델은 Codex의 부모·역할 기본 설정을 따릅니다.
 
 서브에이전트를 지원하는 환경에서는 `gsp-reviewer`에 원문, `TASK.md`, 변경 파일과
 실행 근거를 전달하세요. 지원하지 않는 환경에서는 같은 리뷰 프롬프트를 별도 대화에서

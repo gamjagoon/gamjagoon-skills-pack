@@ -9,3 +9,7 @@ dist/
 .env
 .env.*
 !.env.example
+
+# GAMJAGOON-SKILLS-PACK:START
+.gamjagoon-skills-pack/
+# GAMJAGOON-SKILLS-PACK:END

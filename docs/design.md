@@ -7,6 +7,7 @@
 - `gsp init [PATH] [--minutes N] [--dry-run] [--overwrite]`: 자체 워크플로와 리뷰어 설치.
 - `gsp prompt [STAGE]`: 단계 목록 또는 해당 한국어 프롬프트를 stdout으로 출력.
 - `gsp doctor [PATH]`: 파일·TOML·명령 존재의 로컬 정적 검사. 실제 에이전트 실행 증거로 표현하지 않는다.
+- `gsp keyboard [PATH] [--enter newline|submit] [--dry-run]`: 별도 선택 명령. `.codex/config.toml`의 composer.submit과 editor.insert_newline만 변경한다. 기본 init에는 입력 키 변경을 포함하지 않는다.
 - `gsp skills list`: 선택 외부 스킬, 고정 커밋, 출처, 라이선스 정보 출력.
 - `gsp skills add NAME [--path PATH] [--dry-run]`: 명시적으로 고른 스킬 폴더 전체 다운로드. 기존 스킬은 덮어쓰지 않는다.
 

@@ -46,6 +46,30 @@ def project_root(path: str | Path) -> Path:
     return root
 
 
+def global_codex_roots() -> set[Path]:
+    roots = {Path.home() / ".codex"}
+    custom_codex_home = os.environ.get("CODEX_HOME")
+    if custom_codex_home:
+        roots.add(Path(custom_codex_home).expanduser())
+    return {path.resolve() for path in roots}
+
+
+def ensure_project_scope(root: Path) -> None:
+    """Refuse locations that turn project-local files into user-global Codex settings."""
+    root = root.resolve()
+    globals_ = global_codex_roots()
+    if root == Path.home().resolve() or (root / ".codex").resolve() in globals_:
+        raise SetupError(
+            "홈 또는 Codex 전역 설정 경로에는 적용하지 않습니다. 프로젝트 폴더를 지정하세요."
+        )
+    candidate = root / ".codex/config.toml"
+    if candidate.is_file():
+        for directory in globals_:
+            global_config = directory / "config.toml"
+            if global_config.is_file() and candidate.samefile(global_config):
+                raise SetupError("프로젝트 설정이 전역 설정과 같은 파일입니다; 파일을 보존합니다.")
+
+
 def safe_path(root: Path, relative: str) -> Path:
     parts = PurePosixPath(relative).parts
     if (
@@ -133,6 +157,7 @@ def _resource_files(directory, prefix: str = ""):
 
 
 def plan_init(root: Path, *, minutes: int = 240, overwrite: bool = False) -> list[Change]:
+    ensure_project_scope(root)
     if minutes <= 0:
         raise SetupError("--minutes는 1 이상의 실제 제작 시간이어야 합니다.")
     # Guard local state before planning any writes, even if no backup is needed yet.

@@ -15,6 +15,7 @@ from .installer import (
     SetupError,
     apply_changes,
     asset_root,
+    ensure_project_scope,
     read_existing,
     safe_path,
 )
@@ -129,6 +130,7 @@ def download_skill(item: dict) -> dict[str, tuple[bytes, int]]:
 
 
 def add_skill(name: str, root: Path, *, dry_run: bool = False) -> None:
+    ensure_project_scope(root)
     item = next((item for item in catalog() if item["name"] == name), None)
     if item is None:
         raise SetupError(f"알 수 없는 스킬입니다: {name}; gsp skills list로 확인하세요.")

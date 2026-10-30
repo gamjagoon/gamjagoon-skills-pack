@@ -20,6 +20,16 @@ def test_project_root_and_minutes_validation(tmp_path: Path) -> None:
         installer.plan_init(tmp_path, minutes=0)
 
 
+def test_init_refuses_home_before_creating_project_files(tmp_path: Path, monkeypatch) -> None:
+    home = tmp_path / "fake-home"
+    home.mkdir()
+    monkeypatch.setattr(Path, "home", lambda: home)
+
+    with pytest.raises(SetupError):
+        installer.plan_init(home)
+    assert list(home.iterdir()) == []
+
+
 @pytest.mark.parametrize("relative", ["../escape", "/absolute", "a/../../escape", "a\\b"])
 def test_safe_path_rejects_traversal(tmp_path: Path, relative: str) -> None:
     with pytest.raises(SetupError):

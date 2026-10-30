@@ -49,6 +49,10 @@ def parser() -> argparse.ArgumentParser:
     prompt.add_argument("stage", nargs="?", choices=STAGES)
     doctor = commands.add_parser("doctor", help="설치 파일·TOML·도구 존재의 로컬 정적 검사")
     doctor.add_argument("path", nargs="?", default=".")
+    keyboard = commands.add_parser("keyboard", help="Codex CLI 프로젝트 로컬 줄바꿈·전송 키 설정")
+    keyboard.add_argument("path", nargs="?", default=".")
+    keyboard.add_argument("--enter", choices=("newline", "submit"), default="newline")
+    keyboard.add_argument("--dry-run", action="store_true", help="파일 변경 없이 입력 키 계획 출력")
     skills = commands.add_parser("skills", help="선택 외부 스킬 카탈로그 및 명시적 다운로드")
     skill_commands = skills.add_subparsers(dest="skill_command", required=True)
     skill_commands.add_parser("list", help="출처·고정 커밋·라이선스 목록 출력")
@@ -127,6 +131,25 @@ def main(argv: list[str] | None = None) -> int:
                 print(text, end="" if text.endswith("\n") else "\n")
         elif args.command == "doctor":
             return doctor(args.path)
+        elif args.command == "keyboard":
+            from .keyboard import plan_keyboard
+
+            root = project_root(args.path)
+            changes = plan_keyboard(root, enter=args.enter)
+            if args.enter == "newline":
+                print("KEYS Enter/Ctrl+J=줄바꿈; Alt+Enter=전송 (지원 시 Ctrl+Enter도 가능)")
+            else:
+                print("KEYS Enter=전송; Ctrl+J 또는 Shift+Enter/Alt+Enter=줄바꿈")
+            for change in changes:
+                print(f"{change.action} {change.relative}")
+            if args.dry_run:
+                print("DRY_RUN 파일·폴더 변경 없음")
+            else:
+                backups = apply_changes(root, changes)
+                print(f"CONFIGURED {len(changes)} changed files in {root}")
+                if backups:
+                    print(f"BACKUP {root / Path(backups[0]).parent}")
+                print("Codex CLI를 다시 실행해 입력을 확인하세요. 실제 터미널 전달은 환경별입니다.")
         else:
             from .external import add_skill, catalog
 
