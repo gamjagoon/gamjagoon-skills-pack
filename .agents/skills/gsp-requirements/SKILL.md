@@ -28,6 +28,10 @@ Prefer the existing document location for the work record; if none exists, use t
 
 Do not arbitrarily settle implementation technology as a requirement or add functionality absent from the original text. Do not state unverifiable numbers or tolerances as facts.
 
+## Problem, experiment, and completion scope
+
+For substantive work, establish the project brief defined in AGENTS.md in the existing work record or `TASK.md` (with its matching HTML view): observed problem and affected users, current baseline, measurable outcome, constraints, scope/non-goals, unresolved assumptions, and whether the request ends at investigation, PoC, or the agreed finished deliverable (PoR). Distinguish unknown limits from unlimited resources. Link PoC hypotheses and PoR acceptance criteria to requirement IDs; do not require a new PoC when existing evidence is sufficient.
+
 ## Human-reviewable deliverables
 
 Follow the "Documents for human review" contract in the project AGENTS.md. The lead maintains a Markdown source and a matching, self-contained HTML view (default `TASK.md` and `TASK.html`), using the user's language and existing document locations. Publish the requirements and acceptance criteria, original-text references, unresolved questions with recommendations, and confirmed decisions in both views. If only requirements were requested, do not fill later stages with invented results. Keep both views synchronized, preserve unrelated files, and link both in the user-facing handoff. Respect explicit format and no-write constraints; do not claim an HTML file exists if it was not created.

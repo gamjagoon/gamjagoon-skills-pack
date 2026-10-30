@@ -30,6 +30,10 @@ Parallelize only independent work. Share investigation and fact extraction as re
 
 For each assignment, specify the objective, input evidence, owned files, actual cwd, completion criteria, and results to return. Also isolate outputs, virtual environments, caches, and ports. A worktree is not a security boundary, and do not assume subagents automatically have an independent cwd. The main worker integrates only verified changes and reruns relevant checks.
 
+## Problem, experiment, and completion scope
+
+Follow the agreed endpoint and the PoC/PoR contract in AGENTS.md. Run only the experiments needed to resolve material uncertainty within authorized budgets and stop rules. Record actual results and known cost without turning simulated or narrow PoC evidence into finished-product claims. If PoR is requested, close the agreed implementation, failure-handling, reproducibility, documentation and verification gaps; otherwise stop at the requested endpoint. Report unverified criteria and blockers rather than calling the deliverable complete.
+
 ## Human-reviewable deliverables
 
 Follow the "Documents for human review" contract in the project AGENTS.md. The lead maintains a Markdown source and a matching, self-contained HTML view (default `TASK.md` and `TASK.html`), using the user's language and existing document locations. Publish the implementation summary, changed files, actual commands and results, unresolved findings, and unrun checks in both views. After the review, the lead adds its findings and fix/recheck evidence and refreshes the HTML. Keep both views synchronized, preserve unrelated files, and link both in the user-facing handoff. Respect explicit format and no-write constraints; do not claim an HTML file exists if it was not created.

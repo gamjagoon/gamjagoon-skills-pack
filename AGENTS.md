@@ -15,6 +15,53 @@ The script installs only the managed block below, not this source-only entrypoin
 <!-- GAMJAGOON-SKILLS-PACK:START -->
 # gamjagoon-skills-pack
 
+## Project purpose and working brief
+
+Use this as a general-purpose project guide. Start from the problem and intended outcome, not from a technology or a demo deadline. For substantial new work, establish the following brief in the existing project record or `TASK.md`, and maintain its matching HTML view. Reuse answers and repository evidence instead of asking the user to fill in a form from scratch. Keep unknowns explicit; ask only about unresolved decisions that materially affect the outcome. For a small, well-understood change, record only the affected items.
+
+| Brief section | What to establish |
+| --- | --- |
+| Problem and users | Who encounters which problem, in what situation, and why it matters. Link examples or evidence; distinguish an observed problem from a hypothesis. |
+| Current baseline | The existing workflow, workaround, or measured behavior; explain why a change is needed and what must remain compatible. |
+| Desired outcome | Observable user benefit and acceptance criteria, including measurement method and target environment. Do not invent numerical targets. |
+| Scope and exclusions | Required scenarios, explicit non-goals, and the requested endpoint: investigation, PoC, or finished deliverable (PoR). |
+| Constraints | Deadline if any, money/API/compute limits, available people and tools, hardware/runtime, data access, privacy/security, licenses, and external dependencies where relevant. Mark an unknown separately from no constraint. |
+| Assumptions and risks | Unproven beliefs, impact if wrong, dependencies, and the next evidence needed. Prioritize risks that could invalidate the approach. |
+| PoC experiment | Hypothesis, cheapest adequate test, inputs, expected observation, pass/fail criteria, cost ceiling, stop rule, and result. Existing sufficient evidence may make a new PoC unnecessary. |
+| PoR completion | The agreed usable deliverable, required quality and verification evidence, delivery method, and any remaining gaps with owners or next actions. |
+
+These are working-record fields, not values to fabricate or placeholders to declare complete. Keep durable project-specific instructions outside this pack's managed block when they belong in `AGENTS.md`, so updates preserve them. Installation creates guidance only; it does not choose a project, start experiments, or manufacture a completed brief.
+
+## From problem to PoC to PoR
+
+In this pack, **PoC** means a bounded proof of concept that resolves a specific uncertainty. **PoR** means the finished deliverable for the scope agreed with the user. PoR is a user-defined completion target here, not an assumed expansion of the acronym, a universal production certification, or automatic authorization to deploy.
+
+Use the six work stages below within this progression; do not create a second competing process or extra agents. The requirements stage establishes the problem, constraints, target endpoint, and acceptance criteria. Architecture selects an approach and necessary experiments. Development obtains evidence and, when included in the request, completes the deliverable. Reviews check evidence against the current endpoint. Reopen only affected decisions when evidence changes the plan. A PoC-only request ends with its findings and next-step recommendation; it does not authorize a full product build. Do not force a new PoC for a routine change already supported by adequate evidence; state why it is unnecessary.
+
+### PoC: the least costly adequate experiment
+
+Identify the most consequential unresolved hypothesis before building. Compare the current/manual approach, a simple deterministic solution or reuse of existing tools, and a more complex option only when needed. Choose the smallest experiment that can discriminate between approaches under the relevant conditions. Low cost means reducing total effort, API/compute spend, dependencies, and rework while preserving useful evidence; it does not mean choosing a cheap model or a mock that cannot answer the question.
+
+Before running an experiment, record its hypothesis, representative input, baseline, observable pass/fail criteria, expected resource use, allowed budget, stop condition, and resulting decision. If the environment cannot support the required check, record that limit rather than replacing it with a success claim. Use small samples or mocks only when adequate for the hypothesis, label them, and identify what later needs validation with real data or integrations.
+
+Reuse existing assets and cached results when applicable, bound calls and retries, and avoid parallel experiments that answer the same question without a reason. Estimates and actual cost must be distinguished; record unknown cost as unknown. Do not treat an unspecified budget as unlimited or silently begin unapproved paid services, infrastructure, or external writes. When no monetary budget is specified, prefer bounded work using already-authorized resources without a new paid service or resource commitment; this is not permission to invent a zero-cost estimate. Stay within existing authorization, investigate available low-cost options, and ask only for the missing spending or scope decision. Keep independent work moving.
+
+After the PoC, record observations, cost actually known, limitations, and a decision: proceed, revise the hypothesis/approach, or stop. A failed experiment can be useful evidence but is not a passing PoC or a finished product. If criteria fail or the budget ceiling is reached, stop the affected experiment and reassess; do not spend more or lower the success criteria silently. A successful narrow experiment does not establish overall readiness.
+
+### PoR: the agreed finished deliverable
+
+Before expanding a PoC, make its gaps explicit and translate them into scoped implementation and verification work. Proceed within the existing request without repeated approval when PoR was already requested; otherwise ask before expanding scope. Carry forward useful PoC evidence but retire demo shortcuts that conflict with the agreed deliverable.
+
+Define completion proportionally to the artifact and its intended users. Check the applicable items below and justify any exclusions; do not add enterprise infrastructure to a small local tool merely to satisfy a checklist.
+
+- Required user workflows work through the actual entry point in the agreed environment; acceptance criteria trace to observed results, not just a passing test count.
+- Relevant invalid inputs, boundary cases, failures, and existing behavior are checked. Data integrity, security/privacy, performance, reliability, or accessibility have explicit criteria and evidence where they matter to the project.
+- Someone else can obtain the artifact and reproduce setup and execution using documented prerequisites, versions/configuration, commands, and representative examples. Handle secrets without embedding them in code or reports.
+- The applicable delivery package is complete: source/build artifact or document, setup and usage instructions, verification results, known limitations, and maintenance or handoff information. For deployed/stateful systems, include the necessary logging, recovery/rollback, migration and ownership details; omit inapplicable operational machinery with a reason.
+- Blocking defects and essential decisions are resolved. Distinguish independent review from author checks, and record accepted nonblocking limitations. Passing a PoC or a review of only one part does not close unverified PoR criteria.
+
+Report the actual state: PoC not needed, planned, in progress, passed or failed; and PoR not requested, in progress, blocked or complete, as applicable. Complete only the requested scope with supporting evidence. When essential verification cannot be run, describe what is implemented, what remains unverified, its impact, and the next action; do not label the result a finished PoR. Readiness evidence never substitutes for permission to publish, deploy, send data, or incur new costs.
+
 ## Workflow
 
 Carry out development work in the following order. Read the skill or reviewer contract for the current stage and pass its outputs and unresolved issues to the next stage. Do not require the user to invoke each stage. If the user requests only one stage, perform only up to that stage. For simple questions and small changes, apply only the necessary stages and briefly record why any were omitted.
@@ -28,7 +75,7 @@ Carry out development work in the following order. Read the skill or reviewer co
 | 5 | [Development](.agents/skills/gsp-development/SKILL.md) | Implementation, execution and test results |
 | 6 | [gsp-reviewer](.codex/agents/gsp-reviewer.toml), mode `development` | Review of defects and regressions, fixes and revalidation, usage and limitations |
 
-At the start, compare the current request with the source and unfinished items to determine whether it continues existing work or is a separate task. For the same task, continue from valid outputs; for a separate task, create a new title and start/deadline section. Do not reuse the PASS or time of completed work for a new request. Prefer the existing location for records of actual creation or development work; if none exists, collect the following in one `TASK.md`. Do not create a work record or new deadline for simple questions and answers. If asked only to install, do not start a TASK or creation work.
+At the start, compare the current request with the source and unfinished items to determine whether it continues existing work or is a separate task. For the same task, continue from valid outputs; for a separate task, create a new title and record its start and any user-specified deadline. Do not reuse the PASS or time of completed work for a new request. Prefer the existing location for records of actual creation or development work; if none exists, collect the following in one `TASK.md`. Do not create a work record or new deadline for simple questions and answers. If asked only to install, do not start a TASK or creation work.
 
 - Current task: the source text or its location, changes to the request, scope and budget, current stage, and next action.
 - The connection from requirements → design/work → actual verification. Keep existing records and IDs and distinguish changes.
@@ -75,13 +122,11 @@ For each significant finding, the primary worker records `fix location / recheck
 
 If the native role is unavailable, report that it was not loaded. When independent subagents with authorized model settings are available, provide one with the same reviewer contract and explicit mode, and label it as a fallback rather than a native `gsp-reviewer` run. If independent subagents are unavailable, proceed with a self-check and explicitly state that independent review was not performed. Reading the TOML or a successful installation alone does not establish native-agent execution. The read-only review contract does not create a separate security sandbox; permissions are inherited, and checks that write files require an isolated location. If requirements or interfaces change, reopen only the affected design, implementation, verification, and review. Judge final completion by the actual evidence for current mandatory requirements and unresolved blockers. Do not declare completion based only on a review PASS or test count.
 
-## Time and scope
+## Budget, scope, and stopping conditions
 
-Prioritize the user's specified budget and deadline and existing progress records. The default budget for actual development without other instructions is 180 minutes. At the start, use an actual clock to record the start, deadline, and time zone, and do not reset them on resumption. Do not invent times if the clock cannot be checked.
+Use the user's actual deadline and resource limits; there is no default fixed-duration schedule. If a deadline exists, use an actual clock to record the start, deadline, and time zone and preserve them on resumption. Do not invent a deadline, timing measurement, budget, or spending authorization. Scale milestones to the agreed scope and risk, leaving time for meaningful verification, documentation, and handoff.
 
-Under the default budget, organize requirements, architecture, and the two short reviews within the first 20 minutes. Execute the core flow by 60 minutes, focus on verification, development review, and significant fixes from 130 minutes, and reserve the final 15 minutes for final execution, usage, and handoff. Scale proportionally for a different budget. If finished early, hand off immediately without a fixed wait.
-
-If core execution is delayed, reassess the cause of the blockage, remaining mandatory items, and smallest executable path. Defer additional features and protect verification and handoff time. Obtain the user's decision before changing mandatory scope or success criteria; do not arbitrarily remove them or substitute mock results. At a user-defined hard deadline, hand off with completed and unfinished work and reproduction instructions. The default budget without a separate hard deadline is a replanning benchmark: report any overrun and remaining work, and do not fabricate completion.
+When progress or evidence invalidates the plan, identify the bottleneck, remaining mandatory outcomes, resource use, and the smallest useful next step. Defer optional features before sacrificing required correctness or verification. Obtain the user's decision before changing mandatory scope, success criteria, or an agreed budget. At a hard deadline or cost ceiling, stop affected work safely and hand off completed items, unresolved work, evidence and reproducible next steps. Without a hard deadline, reassess when evidence warrants it; do not wait out an arbitrary timebox or keep extending an unsuccessful experiment.
 
 ## Model use
 

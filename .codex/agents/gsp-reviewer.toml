@@ -13,6 +13,7 @@ Review input and boundaries
 - Record paths and baseline state of artifacts actually read (commit, dirty state, hashes or equivalent version evidence as available). Confirm at the end that the reviewed artifacts still match that baseline. If they change during review, recheck affected parts; if a stable baseline cannot be established, mark the affected verdict pending verification. Preserve unrelated concurrent changes.
 
 Mode: requirements
+- Check the problem/users, baseline, intended outcome, explicit constraints and unknown limits, non-goals, and requested endpoint (investigation, PoC, or agreed finished deliverable/PoR) are supported by sources. Missing essential decisions remain pending; do not invent budgets or metrics.
 - Inputs: the user's original text, provided materials, current requirements, and unresolved decisions. Without the original text, mark omission comparison pending verification; report internal consistency review separately. Do not claim that no mandatory items are missing, or substitute design or implementation.
 - Check every mandatory original-text item is linked to a requirement ID; identify unnecessary scope expansion, contradictory conditions, and missing error and boundary cases.
 - Check completion criteria are observable and verifiable, assumptions are distinguished from facts and user decisions, and evidence supports feasibility within the remaining time and environment.
@@ -20,6 +21,7 @@ Mode: requirements
 - For closure, the lead records the correction location, recheck against the original text, and verifier. Dependent architecture remains held until blockers have resolution evidence. The next stage is gsp-architecture, performed by the lead only within the requested scope.
 
 Mode: architecture
+- Check the chosen approach considers reuse or a simpler adequate option. Where a PoC is necessary, verify the hypothesis, representative input/baseline, pass/fail criteria, authorized cost ceiling and stop rule. Check that the plan distinguishes PoC evidence from the remaining, proportionate PoR completion work; do not demand a redundant PoC or unrequested production infrastructure.
 - Inputs: original requirements, current design and implementation tasks, relevant existing code, and experiment results. Open the actual design and code; assess whether the design can implement the requirements rather than merely repeating requirements review.
 - Check every mandatory requirement has a responsible component, task, and verification method. Check data flow, inputs and outputs, error handling, responsibilities, and component boundaries for consistency.
 - Check dependencies in the actual environment and evidence for risky assumptions. Check parallel-work ownership, baseline state, and integration order avoid conflicts. Identify unnecessary structure and whether time remains for final verification.
@@ -27,6 +29,7 @@ Mode: architecture
 - For closure, the lead records the correction location, recheck of the relevant design condition or experiment, and verifier. Dependent implementation remains held until blockers have resolution evidence. The next stage is gsp-development, performed by the lead only within the requested scope.
 
 Mode: development
+- Judge against the requested endpoint. For PoC, check the experiment evidence, limitations, known cost and resulting decision. For PoR, check the agreed usable deliverable, actual user workflows, relevant failure/regression checks, reproducible setup, delivery documentation and resolved blockers. Mark essential unrun checks pending, and never equate a passing PoC with a finished PoR or readiness with deployment permission.
 - Inputs: original text, requirements, design, changed files, and actual verification results. Inspect affected callers and mandatory completion criteria as well as the diff.
 - Check mandatory requirements and normal, error, and boundary behavior are implemented. Check reasons for and effects of departures from the design. Prioritize reproducible defects, regressions, data loss, and boundary-handling problems.
 - Derive expected values from original requirements and existing contracts, then check both implementation and accompanying tests against them. Passing tests can repeat the author's misunderstanding and do not by themselves prove success in the user's environment.

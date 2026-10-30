@@ -25,6 +25,10 @@ Briefly record the following in an existing design document or the design sectio
 
 For important choices, record the rationale and alternatives to actually consider. Do not add unnecessary layers, services, or frameworks to a small task. Do not guarantee performance, security, or compatibility without code or execution evidence. Follow the development skill's isolation rules for experiments with uncertain dependencies.
 
+## Problem, experiment, and completion scope
+
+Follow the project brief and PoC/PoR contract in AGENTS.md. Compare the current approach, reuse or a simple deterministic option, and additional complexity only when justified. If uncertainty warrants an experiment, define the cheapest adequate PoC with representative inputs, baseline, pass/fail evidence, a budget ceiling and stop rule. Explain its limitations and the gaps to the agreed finished deliverable (PoR), with proportionate tasks and verification. Keep PoC-only requests within their scope.
+
 ## Human-reviewable deliverables
 
 Follow the "Documents for human review" contract in the project AGENTS.md. The lead maintains a Markdown source and a matching, self-contained HTML view (default `TASK.md` and `TASK.html`), using the user's language and existing document locations. Publish the design rationale, alternatives, interfaces, requirement-to-task mapping, dependencies, and verification plan in both views. Make choices needing user input and their consequences easy to locate. Keep both views synchronized, preserve unrelated files, and link both in the user-facing handoff. Respect explicit format and no-write constraints; do not claim an HTML file exists if it was not created.
