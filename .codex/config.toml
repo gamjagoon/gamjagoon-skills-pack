@@ -1,5 +1,0 @@
-[tui.keymap.composer]
-submit = ["alt-enter", "ctrl-enter"]
-
-[tui.keymap.editor]
-insert_newline = ["enter", "ctrl-j", "shift-enter"]

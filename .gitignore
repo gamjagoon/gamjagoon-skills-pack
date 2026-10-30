@@ -10,6 +10,4 @@ dist/
 .env.*
 !.env.example
 
-# GAMJAGOON-SKILLS-PACK:START
-.gamjagoon-skills-pack/
-# GAMJAGOON-SKILLS-PACK:END
+.gsp-backups/

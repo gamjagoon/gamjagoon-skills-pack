@@ -1,132 +1,68 @@
 # gamjagoon-skills-pack
 
-**A project-local Codex workflow pack for focused development.**
+**AGENTS.md + six Codex skills for requirements, architecture, development, and reviews.**
 
-작업 내용을 주면 Codex가 요구사항 정리부터 구현·검증·인계까지 진행하도록 돕는
-프로젝트 설정 팩입니다. 개발 워크플로, 역할별 에이전트 설정, 병렬 실험 지침,
-작업 기록 양식과 Enter 줄바꿈 설정을 설치합니다.
+`AGENTS.md`에 공통 작업 지침을 두고, 각 단계를 별도 스킬로 나눈 팩입니다.
+설치 프로그램이나 패키지 의존성 없이 Markdown 파일을 프로젝트에 복사해서 사용합니다.
 
-## 설치와 사용
+## 사용하기
 
-새 폴더 또는 기존 프로젝트에서 Codex를 켜고 요청하세요.
+작업 폴더에서 Codex를 켜고 요청하세요.
 
 > gamjagoon-skills-pack 설치해줘.
 
-Codex가 공개 저장소의 [설치 안내](INSTALL.md)를 따라 현재 폴더에 구성합니다.
-설치 명령이나 단계별 프롬프트를 외울 필요가 없습니다. 설치 후에는 **원하는 작업 내용만
-전달하세요.** 별도의 시작 프롬프트 없이 기본 흐름이 적용됩니다.
-설치 자체로 작업 시간이 시작되지는 않습니다.
+Codex가 이 저장소의 `AGENTS.md`와 `.agents/skills/`를 현재 프로젝트에 적용하면 됩니다.
+그다음에는 작업 내용만 전달하세요. 특정 단계만 원하면 “요구사항만 작성해줘” 또는
+“아키텍처 리뷰해줘”처럼 요청할 수 있습니다.
 
-이미 정한 시간·마감·프로젝트 지침이 있으면 그것을 우선합니다. 간단한 질문이나 작은
-수정은 작업 규모에 맞게 처리하며, 작업이 끝나면 바로 결과를 전달합니다.
+이름으로 저장소를 찾지 못하면 [저장소 주소](https://github.com/gamjagoon/gamjagoon-skills-pack)를 전달하세요.
+새 스킬이 보이지 않으면 프로젝트에서 Codex를 다시 실행하거나 해당 `SKILL.md`를 읽도록 요청하세요.
 
-최초 설치에는 공개 GitHub와 uv 배포처에 접근할 수 있어야 합니다. Codex가 이름으로
-저장소를 찾지 못하면 [이 저장소 주소](https://github.com/gamjagoon/gamjagoon-skills-pack)를
-전달하세요. 새 역할이나 입력 키가 인식되지 않으면 해당 프로젝트에서 Codex를 다시 실행하세요.
+## 구성과 흐름
 
-## 기본 작업 흐름
-
-| 단계 | 진행할 일 |
-| --- | --- |
-| 요구사항·설계 | 완료 기준, 최소 설계·작업 순서 정리 |
-| 구현 | 핵심 기능부터 구현하고 실행 |
-| 검증·리뷰 | 요구사항 검증, 독립 구현 리뷰, 중요한 결함 수정 |
-| 인계 | 최종 실행, 사용법·결과·남은 한계 정리 |
-
-Codex는 실제 작업 시작과 진행 상황을 `TASK.md`에 기록합니다. 문서마다 사용자 승인을
-기다리는 절차가 아니며, 결과에 영향을 주는 중요한 미결정만 질문합니다. 시간이 부족하면
-필수 기능과 최종 검증을 우선하고, 구현하지 못한 항목을 명시합니다.
-
-이 흐름은 설치된 지침을 읽은 Codex가 수행합니다. 설치 프로그램 자체는 모델을 호출하거나
-백그라운드 타이머를 실행하지 않습니다.
-
-## 설치되는 구성
-
-| 파일·폴더 | 용도 |
-| --- | --- |
-| `AGENTS.md` 관리 블록 | 역할 선택과 작업 운영 지침 |
-| `TASK.md` | 요구사항·완료 기준·결정·진행·실행 근거 기록; 기존 파일 유지 |
-| `.agents/skills/timeboxed-workflow/` | 필요한 단계에서 읽는 워크플로와 병렬 작업 참조 문서 |
-| `.codex/agents/gsp-*.toml` | 역할별 모델·추론 강도·작업 지침 |
-| `.codex/config.toml` | 프로젝트 로컬 줄바꿈·전송 키 |
-| `.gamjagoon-skills-pack/` | 변경 전 백업과 로컬 설치 기록 |
-
-기본 설치는 외부 스킬을 추가하지 않습니다. 사용자 전역 설정과 현재 대화의 모델은
-변경하지 않습니다. 기존 `AGENTS.md`와 `.gitignore`의 관리 블록 밖 내용도 보존합니다.
-
-## 역할별 에이전트
-
-| 역할 | 모델 | effort | 용도 |
-| --- | --- | --- | --- |
-| `gsp-triage` | GPT-6 Luna | low | 읽기 전용 사실 추출·로그 확인 |
-| `gsp-researcher` | GPT-6 Luna | medium | 읽기 전용 조사·코드 탐색 |
-| `gsp-worker` | GPT-6 Luna | medium | 범위가 명확한 구현·작은 실험 |
-| `gsp-integrator` | GPT-6.1 Sol | medium | 복잡한 구현·결과 통합 |
-| `gsp-debugger` | GPT-6.1 Sol | high | 원인이 불명확한 오류·위험한 변경 |
-| `gsp-reviewer` | GPT-6.1 Sol | medium | 읽기 전용 독립 구현 리뷰 |
-
-주 작업에는 Sol medium을 권장하되 현재 모델을 자동 변경하지 않습니다. 역할은 필요한
-경우에만 사용하며, 모든 작업을 여섯 에이전트에 나눠 보내지 않습니다. 사용자 지정 모델과
-플랫폼 제약을 우선하고, 모델이나 서브에이전트 기능이 없으면 제한을 알립니다.
-설정 파일 설치만으로 해당 모델의 이용 가능성이나 실제 실행이 확인되지는 않습니다.
-
-## 병렬 조사와 실험
-
-독립적인 조사는 읽기 전용으로 병렬 진행하고, 파일을 바꾸는 실험은 작업 공간을 분리합니다.
-Git 프로젝트는 실험별 worktree를, Git을 사용할 수 없는 프로젝트는 필요한 파일만 복사한
-임시 폴더를 사용합니다. 각 작업에 담당 파일·완료 기준·출력 경로·환경·포트를 지정하고,
-주 에이전트가 결과를 비교해 검증된 변경만 통합합니다.
-
-설치 시 빈 worktree나 컨테이너를 미리 만들지는 않습니다. 실제 작업에서 필요할 때
-Codex가 준비합니다. worktree는 파일 변경을 분리하지만 보안 샌드박스는 아닙니다.
-생성부터 실험·통합·정리까지의 절차와 명령 예시는 [병렬 작업 안내](docs/parallel-work.md)를 참고하세요.
-
-## 입력 키
-
-| 키 | 동작 |
-| --- | --- |
-| Enter, Ctrl+J | 줄바꿈 |
-| Alt+Enter | 전송 |
-| Ctrl+Enter | 터미널이 구분해서 전달하는 경우 전송 |
-
-Codex CLI 0.165.0 설정 형식을 기준으로 합니다. 실제 키 전달과 프로젝트 설정 인식은
-사용하는 터미널에서 확인하세요. [입력 키 안내](docs/keyboard.ko.md)에 복원 방법도 있습니다.
-
-## 업데이트와 기존 프로젝트
-
-Codex에 `gamjagoon-skills-pack 최신 버전으로 업데이트해줘`라고 요청할 수 있습니다.
-설치 안내에 따라 변경을 미리 확인하고 기존 사용자 내용을 보존합니다. 같은 버전의 같은
-구성을 다시 설치하면 파일을 다시 쓰지 않습니다. 변경된 관리 파일은 차이를 확인한 뒤
-백업하고 교체하며, 기존 `TASK.md`와 기록된 작업 예산을 유지합니다.
-
-## 수동 실행과 개발
-
-일반 사용자는 위 설치 요청만 하면 됩니다. 직접 실행하려면 Python 3.11 이상과
-[uv](https://docs.astral.sh/uv/getting-started/installation/)를 사용하세요. 아래 아카이브 경로는 Git 설치가 필요 없습니다.
-
-```bash
-uvx --python '>=3.11' --from https://github.com/gamjagoon/gamjagoon-skills-pack/archive/refs/tags/v0.3.0.tar.gz gsp setup ./my-project
+```text
+AGENTS.md
+.agents/skills/
+├── gsp-requirements/SKILL.md
+├── gsp-requirements-review/SKILL.md
+├── gsp-architecture/SKILL.md
+├── gsp-architecture-review/SKILL.md
+├── gsp-development/
+│   ├── SKILL.md
+│   └── references/parallel-work.md
+└── gsp-development-review/SKILL.md
 ```
 
-`setup`은 전체 구성을, `init`은 입력 키를 제외한 구성을 설치합니다.
-`--minutes N`으로 새 TASK의 작업 예산을 지정할 수 있습니다.
-`--dry-run`은 변경 계획만 출력합니다. `setup --no-keyboard`는 기존 입력 키를 유지합니다.
-`gsp doctor`는 설치 파일을 정적으로 검사하며, `gsp prompt`는 필요할 때 참조 내용을
-확인하는 보조 명령입니다. 별도 프롬프트 입력은 기본 사용 절차에 필요하지 않습니다.
+| 순서 | 스킬 | 하는 일 |
+| --- | --- | --- |
+| 1 | [요구사항 작성](.agents/skills/gsp-requirements/SKILL.md) | 원문·범위·완료 기준 정리 |
+| 2 | [요구사항 리뷰](.agents/skills/gsp-requirements-review/SKILL.md) | 누락·모순·검증 가능성 확인 |
+| 3 | [아키텍처](.agents/skills/gsp-architecture/SKILL.md) | 최소 구조·인터페이스·구현 작업 설계 |
+| 4 | [아키텍처 리뷰](.agents/skills/gsp-architecture-review/SKILL.md) | 요구사항 충족·실행 가능성 확인 |
+| 5 | [개발](.agents/skills/gsp-development/SKILL.md) | 구현·실험·실제 검증 |
+| 6 | [개발 리뷰](.agents/skills/gsp-development-review/SKILL.md) | 결함·회귀 확인, 수정·재검증·인계 |
 
-소스 개발과 검증:
+리뷰마다 사용자 승인을 기다리지는 않습니다. 중요한 미결정만 질문하며, 기존 문서가
+없으면 실제 작업 중 `TASK.md` 하나에 결과를 모읍니다. 단순한 수정은 필요한 단계만 사용합니다.
 
-```bash
-uv sync --frozen
-uv run --frozen pytest -q
-uv run --frozen ruff check .
-uv run --frozen ruff format --check .
-uv build
-uv run --frozen python tools/smoke_install.py
-```
+## 모델과 병렬 작업
 
-Linux/WSL을 우선 검증합니다. 파일 설치 검사와 실제 에이전트·터미널 동작 검사는 구분합니다.
-구체적인 실행 결과는 [검증 기록](docs/validation.md), 자세한 사용법은
-[사용 안내](docs/guide.ko.md)에 있습니다.
+[AGENTS.md](AGENTS.md)에 Sol/Luna의 역할별 effort 권장값이 있습니다. 현재 모델이나
+전역 설정을 자동 변경하지 않으며, 실제 모델 선택은 사용하는 Codex 환경의 기능을 따릅니다.
 
-원본 코드와 문서는 [MIT](LICENSE)로 배포합니다.
+읽기 전용 조사는 원본을 공유하고, 파일을 바꾸는 실험은 worktree나 임시 폴더로 분리합니다.
+실행 가능한 예시와 환경·출력·포트 분리, 결과 통합 방법은
+[병렬 작업 안내](.agents/skills/gsp-development/references/parallel-work.md)에 있습니다.
+
+## 설치를 수행하는 Codex에게
+
+1. 사용자의 원래 작업 폴더를 대상으로 삼는다. 공개 저장소의 **현재 main**에서 파일을 읽거나 임시 경로에 내려받는다. 다운로드한 소스 폴더를 사용자 프로젝트로 착각하지 않는다.
+2. `AGENTS.md`가 없으면 복사한다. 기존 파일이 있으면 내용을 보존하고 이 팩의 관리 블록을 병합한다. 같은 블록을 중복 추가하지 않는다. 기존 관리 블록에 사용자 수정이 있으면 먼저 비교하고 보존한다.
+3. `.agents/skills/`의 위 여섯 폴더만 같은 프로젝트 경로에 복사한다. 다른 스킬은 유지한다. 같은 이름의 폴더가 있으면 차이를 확인하고 사용자 변경을 보존한다. 교체 전 사본은 프로젝트의 `.gsp-backups/`에 두고 해당 경로를 기존 `.gitignore`를 보존하며 제외한다. 동일한 파일은 다시 쓰지 않는다.
+4. 대상이 사용자 홈 또는 전역 Codex 설정 폴더라면 적용하지 않는다. 대상 경로에 심볼릭 링크가 있으면 따라 써서 원본을 바꾸지 말고 충돌을 알린다. 설치 후 대상의 AGENTS와 여섯 SKILL 및 참조 파일을 읽어 현재 대화에 적용하고, 원래 사용자 내용이 보존됐는지 확인한다.
+5. 구버전에서 업데이트할 때는 기존 `TASK.md`와 입력 키 설정을 유지한다. 이전 팩에서 온 `timeboxed-workflow` 폴더와 `.codex/agents/gsp-*.toml`만 출처와 사용자 수정 여부를 확인한 뒤 백업으로 옮겨 중복 지침을 정리한다. 소유가 불명확하면 삭제하지 말고 충돌을 알린다. 과거 태그의 설치 프로그램은 실행하지 않는다.
+
+설치가 끝나면 사용자의 작업 요청을 기다립니다. Git·Python·uv로 설치 프로그램을 실행할
+필요가 없으며, 파일 설치 성공이 실제 서브에이전트 실행을 보장하지는 않습니다.
+
+[MIT License](LICENSE)
