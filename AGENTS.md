@@ -1,3 +1,16 @@
+# Installing or updating this pack
+
+When the user asks to install or update **gamjagoon-skills-pack**, read this
+repository's README and `install.sh`. Download the current repository into a
+temporary source directory, preserve the user's original project path, and run
+`bash install.sh --dry-run <project-path>` followed by `bash install.sh <project-path>`
+when the preview succeeds. Use this script instead of manually copying files or
+using the generic skill installer for individual folders. Preserve custom conflicts;
+use `--overwrite` only after reviewing the differences. If Codex protects `.agents`,
+use its normal approval flow and report a blocked installation if approval is unavailable.
+After installation, read the target AGENTS and skills in the current conversation.
+The script installs only the managed block below, not this source-only entrypoint.
+
 <!-- GAMJAGOON-SKILLS-PACK:START -->
 # gamjagoon-skills-pack
 
