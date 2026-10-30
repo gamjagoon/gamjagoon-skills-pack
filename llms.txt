@@ -12,6 +12,6 @@ Canonical repository: https://github.com/gamjagoon/gamjagoon-skills-pack
 - [Keyboard profile](https://github.com/gamjagoon/gamjagoon-skills-pack/blob/main/docs/keyboard.ko.md): Project-local Enter newline and Alt+Enter submit for Codex CLI.
 
 The user does not need to memorize installer commands. Setup installs the original
-workflow and reviewer, not external skills or another AI provider. It does not upload
+180-minute workflow and six project-local Sol/Luna roles, not external skills or another AI provider. It does not upload
 project contents or alter global Codex configuration. This file is a plain-text
 documentation entrypoint; it does not imply automatic discovery by every agent.

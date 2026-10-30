@@ -4,13 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "gamjagoon-skills-pack"
-version = "0.2.0"
-description = "A uv-installable Codex workflow starter for hackathons and timeboxed development"
+version = "0.3.0"
+description = "A project-local Codex workflow pack for focused, 180-minute development"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
 authors = [{ name = "gamjagoon" }]
-keywords = ["codex", "agent-skills", "hackathon", "prompts", "uv"]
+keywords = ["codex", "agent-skills", "parallel-development", "prompts", "uv"]
 dependencies = []
 
 [project.urls]

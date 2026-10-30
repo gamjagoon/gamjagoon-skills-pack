@@ -19,7 +19,7 @@
 - `AGENTS.md`의 명시적 관리 블록: 기존 본문을 보존하며 워크플로 참조 추가.
 - `TASK.md`: 없을 때만 생성. 실제 제작 시간 예산, 원문 요구사항, 설계, task, 결정과 검증 결과.
 - `.agents/skills/timeboxed-workflow/`: 자체 SKILL.md와 필요한 단계별 references.
-- `.codex/agents/gsp-reviewer.toml`: name/description/developer_instructions/sandbox_mode만 지정, 모델과 effort 상속.
+- `.codex/agents/gsp-reviewer.toml`: Sol medium 읽기 전용 리뷰어. 다른 5개 역할과 함께 모델·effort·sandbox_mode를 프로젝트 범위에 지정한다.
 - `.gitignore`의 관리 블록: 로컬 백업·설치 기록 제외.
 - `.gamjagoon-skills-pack/`: 로컬 설치 기록과 교체 전 백업. 프로젝트 자료를 전송하지 않는다.
 
@@ -35,4 +35,31 @@
 
 프롬프트 stage ID: start, requirements, requirements-review, design-tasks, plan-review, feasibility, implement, implementation-review, verify, handoff.
 
-리뷰어는 읽기 전용이며 원문·현재 TASK·변경 파일·실제 검증 근거를 검토한다. 지원 환경에서 서브에이전트 호출을 사용하고, 지원하지 않는 경우 같은 프롬프트를 별도 리뷰 대화에 전달한다. 설치와 doctor는 런타임 호출을 보장하지 않는다. 실제 제작 시간 예산은 전체 시험 시간과 분리하며, 기본 240분은 사용자 조정 가능한 초기값이다.
+리뷰어는 읽기 전용이며 원문·현재 TASK·변경 파일·실제 검증 근거를 검토한다. 지원 환경에서 서브에이전트 호출을 사용하고, 지원하지 않는 경우 같은 프롬프트를 별도 리뷰 대화에 전달한다. 설치와 doctor는 런타임 호출을 보장하지 않는다. setup/init의 기본 180분은 사용자 조정 가능한 초기값이다. 기존 TASK의 예산과 진행 시각은 유지한다.
+
+
+## v0.3.0 기본 운영
+
+설치는 작업 타이머를 시작하지 않는다. 사용자가 개발 작업을 주면 AGENTS 관리 블록과
+워크플로 스킬을 읽은 Codex가 0–20분 정리, 20–130분 구현, 130–165분 검증·독립 리뷰,
+165–180분 인계를 적용한다. 60분에 핵심 흐름의 첫 실행을 목표로 한다. 별도 start 프롬프트나
+열 단계별 승인을 요구하지 않는다. 명시된 다른 예산·마감과 기존 진행 기록은 우선하며,
+짧은 수정·질문은 작업 규모에 맞춰 처리한다. 코드로 시간을 강제하거나 백그라운드 작업을
+시작하는 기능은 없다.
+
+역할은 gsp-triage(Luna low/read-only), gsp-researcher(Luna medium/read-only),
+gsp-worker(Luna medium/workspace-write), gsp-integrator(Sol medium/workspace-write),
+gsp-debugger(Sol high/workspace-write), gsp-reviewer(Sol medium/read-only)다.
+model 값은 gpt-6-luna/gpt-6.1-sol, 추론 필드는 model_reasoning_effort를 사용한다.
+모든 역할 TOML은 관리 파일 충돌·백업 규칙을 따른다. doctor는 필드와 기본 역할 정책을
+검사하며 모델 이용 가능성이나 실제 spawn을 검증하지 않는다. 주 모델·전역 설정·서비스
+티어·동시 실행 수는 변경하지 않는다.
+
+병렬 실행은 작업을 하는 Codex가 필요할 때 수행한다. 독립 읽기 전용 조사는 원본을
+공유할 수 있고, 쓰기 실험은 개별 worktree나 필요한 파일만 복사한 임시 폴더에서 수행한다.
+기존 변경을 보존하고 각 에이전트의 경로·소유 파일·환경·출력을 지정하며 주 에이전트가
+검증된 결과만 통합한다. worktree는 보안 경계가 아니며 에이전트 생성만으로 개별 작업
+공간이 보장되지 않는다. 구체 절차는 [병렬 작업 안내](parallel-work.md)를 따른다.
+
+기존 버전 업데이트는 관리 파일 차이를 확인한 후 --overwrite로 백업·교체한다.
+사용자 수정이 섞여 있으면 병합 판단을 먼저 하며, 기존 TASK와 관리 블록 밖 내용은 보존한다.

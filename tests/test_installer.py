@@ -157,13 +157,95 @@ def test_write_failure_restores_previously_written_files(tmp_path: Path, monkeyp
     assert not (root / "two").exists()
 
 
-def test_conflicting_targets_abort_before_any_project_change(tmp_path: Path) -> None:
+@pytest.mark.parametrize("relative", installer.AGENT_FILES)
+def test_conflicting_targets_abort_before_any_project_change(tmp_path: Path, relative: str) -> None:
     root = tmp_path / "project"
     root.mkdir()
     (root / "TASK.md").write_bytes(b"preserve me")
-    (root / ".codex/agents/gsp-reviewer.toml").parent.mkdir(parents=True)
-    (root / ".codex/agents/gsp-reviewer.toml").write_bytes(b"conflicting reviewer")
+    (root / relative).parent.mkdir(parents=True)
+    (root / relative).write_bytes(b"conflicting local role")
     before = snapshot(root)
     with pytest.raises(SetupError):
         installer.plan_init(root)
     assert snapshot(root) == before
+
+
+@pytest.mark.parametrize("minutes", [90, 240])
+def test_upgrade_preserves_existing_task_and_backs_up_old_role(
+    tmp_path: Path, minutes: int
+) -> None:
+    original_task = f"User task: {minutes} minutes; custom acceptance criteria\n".encode()
+    (tmp_path / "TASK.md").write_bytes(original_task)
+    reviewer = tmp_path / installer.AGENT_FILE
+    reviewer.parent.mkdir(parents=True)
+    old_role = b'name = "gsp-reviewer"\nsandbox_mode = "read-only"\n'
+    reviewer.write_bytes(old_role)
+    old_instructions = (
+        "# User instructions\nKeep these.\n"
+        "<!-- GAMJAGOON-SKILLS-PACK:START -->\n"
+        "Old workflow instructions\n"
+        "<!-- GAMJAGOON-SKILLS-PACK:END -->\n"
+    )
+    (tmp_path / "AGENTS.md").write_text(old_instructions)
+    with pytest.raises(SetupError):
+        installer.plan_init(tmp_path)
+    changes = installer.plan_init(tmp_path, overwrite=True)
+    backups = installer.apply_changes(tmp_path, changes)
+    assert (tmp_path / "TASK.md").read_bytes() == original_task
+    assert (tmp_path / "AGENTS.md").read_text().startswith("# User instructions\nKeep these.\n")
+    assert any((tmp_path / backup).read_bytes() == old_role for backup in backups)
+    assert any((tmp_path / backup).read_text() == old_instructions for backup in backups)
+    assert all((tmp_path / relative).is_file() for relative in installer.AGENT_FILES)
+    assert installer.plan_init(tmp_path) == []
+
+
+def test_worker_role_symlink_cannot_overwrite_external_file(tmp_path: Path) -> None:
+    outside = tmp_path / "outside.toml"
+    outside.write_bytes(b"external content")
+    root = tmp_path / "project"
+    target = root / ".codex/agents/gsp-worker.toml"
+    target.parent.mkdir(parents=True)
+    target.symlink_to(outside)
+    before = snapshot(root)
+    with pytest.raises(SetupError):
+        installer.plan_init(root, overwrite=True)
+    assert snapshot(root) == before
+    assert outside.read_bytes() == b"external content"
+
+
+@pytest.mark.parametrize("global_location", ["default", "custom"])
+@pytest.mark.parametrize("command", ["setup", "init", "keyboard", "skills-add"])
+@pytest.mark.parametrize("dry_run", [False, True])
+def test_cli_refuses_direct_global_codex_roots_without_changes_or_network(
+    tmp_path: Path, monkeypatch, capsys, global_location: str, command: str, dry_run: bool
+) -> None:
+    from gamjagoon_skills_pack import cli, external
+
+    home = tmp_path / "fake-home"
+    default_global = home / ".codex"
+    custom_global = tmp_path / "custom-codex-home"
+    for directory in (default_global, custom_global):
+        directory.mkdir(parents=True)
+        (directory / "config.toml").write_text('model = "global-choice"\n')
+        (directory / "AGENTS.md").write_text("# Preserve global instructions\n")
+    monkeypatch.setenv("HOME", str(home))
+    monkeypatch.setenv("CODEX_HOME", str(custom_global))
+    monkeypatch.setattr(Path, "home", lambda: home)
+
+    def no_network(*_args, **_kwargs):
+        raise AssertionError("global scope refusal must precede network access")
+
+    monkeypatch.setattr(external, "_request", no_network)
+    monkeypatch.setattr("urllib.request.urlopen", no_network)
+    target = default_global if global_location == "default" else custom_global
+    arguments = (
+        ["skills", "add", "frontend-design", "--path", str(target)]
+        if command == "skills-add"
+        else [command, str(target)]
+    )
+    if dry_run:
+        arguments.append("--dry-run")
+    before = snapshot(tmp_path)
+    assert cli.main(arguments) == 1
+    assert "Codex 전역 설정 경로" in capsys.readouterr().err
+    assert snapshot(tmp_path) == before

@@ -1,23 +1,26 @@
 ---
 name: timeboxed-workflow
-description: 제한된 실제 개발 시간 안에 원문 요구사항, 설계, 구현과 검증을 추적하는 작업에 사용합니다.
+description: 실제 제작 작업의 시간 예산, 원문 요구사항, 최소 설계, 구현과 검증을 추적합니다. 단순 질문이나 설치 자체에는 적용하지 않습니다.
 ---
 
 # 제한 시간 개발 워크플로
 
-사용자의 원문과 `TASK.md`를 기준으로 필수 요구사항을 빠짐없이 추적한다. 실제 제작 시간과 질의응답·제출 시간을 구분하고, 시작과 마감 시각을 모르면 임의로 정하지 않는다. 사용자가 범위와 중요한 미결정을 판단하도록 필요한 근거를 제시한다. 이미 승인된 범위는 반복 허락 없이 진행한다.
+사용자의 원문과 기존 `TASK.md`를 우선한다. 별도 제작 예산이 없으면 180분으로 시작한다. 설치 중에는 시계를 시작하지 않는다. 실제 작업 시작 때 사용 가능한 clock 도구 또는 시스템 시계로 실제 시작·마감·시간대를 기록한다. 재개 시 기존 시작/마감을 유지하고 경과 시간을 확인한다. 명시된 다른 예산은 아래 구간을 비례 조정한다.
 
-현재 단계에 해당하는 문서만 읽는다. 단계는 상황에 맞게 반복할 수 있다.
+| 경과 시간(180분 기준) | 할 일 |
+| --- | --- |
+| 0–20분 | 요구사항과 관찰 가능한 완료 기준, 최소 설계 |
+| 20–130분 | 구현과 작은 확인. 60분까지 핵심 흐름 실행 |
+| 130–165분 | 검증, 독립 리뷰 1회, 중요한 결함 수정 |
+| 165–180분 | 최종 재실행, 실행법, 결과와 한계 인계 |
 
-- 시작과 시간 확인: [start](references/start.md)
-- 원문 요구사항과 완료 기준: [requirements](references/requirements.md)
-- 사람의 범위 검토: [requirements-review](references/requirements-review.md)
-- 간단한 설계와 실행 작업: [design-tasks](references/design-tasks.md)
-- 통합 계획의 독립 검토: [plan-review](references/plan-review.md)
-- 위험한 의존성의 작은 실험: [feasibility](references/feasibility.md)
-- 점진적 구현: [implement](references/implement.md)
-- 읽기 전용 구현 검토와 수정: [implementation-review](references/implementation-review.md)
-- 실제 결과 확인: [verify](references/verify.md)
-- 사용자의 직접 실행과 인계: [handoff](references/handoff.md)
+단계는 자동으로 이어간다. 아래 참조와 `gsp prompt`의 이름은 필요한 지시를 찾는 선택 도구다. 열 단계를 수동 호출하거나 매번 승인받지 않는다. 빠르게 끝난 작업을 예산까지 기다리지 않는다. 핵심 흐름이 60분까지 실행되지 않으면 원인을 좁히고 필수 요구사항을 보존하는 축소안을 적용한다. 필수 범위를 바꿔야 하는 결정만 근거와 권고를 제시해 묻고 독립 작업은 계속한다.
 
-리뷰는 지원되는 환경에서 읽기 전용 `gsp-reviewer`를 사용할 수 있다. 지원되지 않으면 동일한 자료와 지시를 별도의 읽기 전용 리뷰 대화에 전달한다. 설치나 정적 검사는 실제 에이전트 실행의 증거가 아니다. 작업 성격에 맞게 확인하며, 실행하지 않은 검증을 성공으로 기록하지 않는다.
+필요한 참조만 읽는다.
+
+- [시작·시계](references/start.md), [요구사항](references/requirements.md), [필수 결정](references/requirements-review.md)
+- [최소 설계](references/design-tasks.md), [선택적 계획 점검](references/plan-review.md), [작은 실험](references/feasibility.md)
+- [구현](references/implement.md), [독립 리뷰 1회](references/implementation-review.md), [검증](references/verify.md), [인계](references/handoff.md)
+- 역할을 사용할 때: [모델 라우팅](references/model-routing.md), [병렬 격리·통합](references/parallel-work.md)
+
+외부 스킬을 기본으로 추가하지 않는다. 작업에 필요한 기능·모델·독립 리뷰를 사용할 수 없으면 한계와 실제 대안을 기록한다. 자체 점검을 독립 리뷰라고 기록하지 않는다. 정적 확인·테스트·모의 실행·실제 실행을 구분하고 미실행 항목을 성공으로 표시하지 않는다.

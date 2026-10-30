@@ -5,7 +5,7 @@ gamjagoon-skills-pack”, or asks for the pack in a new working folder. Execute 
 installation yourself. The user should not need to memorize or paste shell commands.
 
 Canonical public source: **https://github.com/gamjagoon/gamjagoon-skills-pack**.
-Release used by this guide: **v0.2.0**. This package is distributed from GitHub;
+Release used by this guide: **v0.3.0**. This package is distributed from GitHub;
 do not substitute an unrelated PyPI package with a similar name.
 
 ## 1. Keep the user's working directory as the target
@@ -15,11 +15,12 @@ working directory. That is the project to configure. Never run setup in this
 repository's checkout, uv's cache, or a temporary source directory instead.
 
 The default request means: original workflow skill, all ten Korean prompt references,
-read-only reviewer, TASK template, and project-local Enter-to-newline settings. Use
+six project-local Sol/Luna roles, TASK template, parallel-work/model-routing references,
+and project-local Enter-to-newline settings. Use
 a 180-minute working budget unless the user already specified another actual build
 budget. Preserve an existing TASK.md. Do not start solving a task the user has not given.
 Copying only `assets/workflow` into a user-global skills folder is not this setup;
-it omits the project's instructions, reviewer, and input settings.
+it omits the project's instructions, roles, and input settings.
 
 ## 2. Check the tools and obtain uv if needed
 
@@ -48,8 +49,8 @@ absolute project path. Quote it as one argument if it contains spaces. The archi
 source below works without a Git executable.
 
 ```bash
-uvx --python '>=3.11' --from https://github.com/gamjagoon/gamjagoon-skills-pack/archive/refs/tags/v0.2.0.tar.gz gsp setup <project-path> --dry-run
-uvx --python '>=3.11' --from https://github.com/gamjagoon/gamjagoon-skills-pack/archive/refs/tags/v0.2.0.tar.gz gsp setup <project-path>
+uvx --python '>=3.11' --from https://github.com/gamjagoon/gamjagoon-skills-pack/archive/refs/tags/v0.3.0.tar.gz gsp setup <project-path> --dry-run
+uvx --python '>=3.11' --from https://github.com/gamjagoon/gamjagoon-skills-pack/archive/refs/tags/v0.3.0.tar.gz gsp setup <project-path>
 ```
 
 The installation request already authorizes the ordinary project-local setup; a clean
@@ -59,7 +60,12 @@ If the user wants to keep existing Enter behavior, add `--no-keyboard` to both.
 
 For an existing project, preserve its instructions, task contents, model, permissions,
 and unrelated settings. If a managed file conflicts, inspect the difference first.
-Do not use `--overwrite` to discard custom instructions merely to make installation pass.
+For an update request, compare conflicting managed files with the installed release's
+original assets. If they are unchanged release files, the requested update authorizes
+`--overwrite`: preview first, then apply with backups. Preserve TASK.md and content outside
+managed blocks. For customized files, preserve the custom intent by merging or report the
+specific unresolved conflict; do not blindly overwrite. Do not use `--overwrite` to discard
+custom instructions merely to make installation pass.
 Home/global Codex locations are rejected. No project files are uploaded by setup.
 
 ## 4. Verify and load the instructions in this conversation
@@ -70,16 +76,20 @@ from the target project, even if the current Codex conversation began before the
 - `AGENTS.md`
 - `TASK.md`
 - `.agents/skills/timeboxed-workflow/SKILL.md`
-- `.codex/agents/gsp-reviewer.toml`
+- `.agents/skills/timeboxed-workflow/references/model-routing.md`
+- `.codex/agents/gsp-*.toml` (all six roles)
 - `.codex/config.toml` when the keyboard profile was requested
 
 Apply the installed workflow to subsequent work within the user's request and existing
-instructions. Native reviewer discovery and CLI keyboard preferences may require a new
+instructions. Once the user supplies a development task, use the installed 180-minute
+flow automatically; no separate start prompt is required. Installation alone does not
+start the work budget. Respect an existing TASK budget, elapsed time, and explicit user
+instructions. Native role discovery and CLI keyboard preferences may require a new
 Codex session; do not claim those live behaviors merely from static file checks.
 
 Tell the user, briefly, that installation is complete in the verified project path,
 that Enter inserts a newline and Alt+Enter submits on the configured CLI profile,
-and that they can now provide the task. Do not make the user repeat the shell commands.
+and that they can now provide the task without any extra workflow prompt. Do not make the user repeat the shell commands.
 
 ## Discovery note
 

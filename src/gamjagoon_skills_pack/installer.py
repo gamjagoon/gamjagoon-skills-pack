@@ -14,6 +14,16 @@ from pathlib import Path, PurePosixPath
 STATE_DIR = ".gamjagoon-skills-pack"
 SKILL_DIR = ".agents/skills/timeboxed-workflow"
 AGENT_FILE = ".codex/agents/gsp-reviewer.toml"
+# Project-local contracts only; the installer never selects the running main model.
+AGENT_ROLES = {
+    "gsp-triage": ("gpt-6-luna", "low", "read-only"),
+    "gsp-researcher": ("gpt-6-luna", "medium", "read-only"),
+    "gsp-worker": ("gpt-6-luna", "medium", "workspace-write"),
+    "gsp-integrator": ("gpt-6.1-sol", "medium", "workspace-write"),
+    "gsp-debugger": ("gpt-6.1-sol", "high", "workspace-write"),
+    "gsp-reviewer": ("gpt-6.1-sol", "medium", "read-only"),
+}
+AGENT_FILES = tuple(f".codex/agents/{name}.toml" for name in AGENT_ROLES)
 
 
 class SetupError(Exception):
@@ -58,7 +68,7 @@ def ensure_project_scope(root: Path) -> None:
     """Refuse locations that turn project-local files into user-global Codex settings."""
     root = root.resolve()
     globals_ = global_codex_roots()
-    if root == Path.home().resolve() or (root / ".codex").resolve() in globals_:
+    if root == Path.home().resolve() or root in globals_ or (root / ".codex").resolve() in globals_:
         raise SetupError(
             "홈 또는 Codex 전역 설정 경로에는 적용하지 않습니다. 프로젝트 폴더를 지정하세요."
         )
@@ -156,7 +166,7 @@ def _resource_files(directory, prefix: str = ""):
             yield relative, child.read_bytes()
 
 
-def plan_init(root: Path, *, minutes: int = 240, overwrite: bool = False) -> list[Change]:
+def plan_init(root: Path, *, minutes: int = 180, overwrite: bool = False) -> list[Change]:
     ensure_project_scope(root)
     if minutes <= 0:
         raise SetupError("--minutes는 1 이상의 실제 제작 시간이어야 합니다.")
@@ -190,11 +200,17 @@ def plan_init(root: Path, *, minutes: int = 240, overwrite: bool = False) -> lis
                 .replace(b"{{MINUTES}}", str(minutes).encode()),
             )
         )
-    changes.append(
-        file_change(
-            root, AGENT_FILE, assets.joinpath("reviewer.toml").read_bytes(), overwrite=overwrite
+    for name in AGENT_ROLES:
+        resource = (
+            assets.joinpath("reviewer.toml")
+            if name == "gsp-reviewer"
+            else assets.joinpath("agents", f"{name}.toml")
         )
-    )
+        changes.append(
+            file_change(
+                root, f".codex/agents/{name}.toml", resource.read_bytes(), overwrite=overwrite
+            )
+        )
     for relative, data in _resource_files(assets.joinpath("workflow")):
         changes.append(file_change(root, f"{SKILL_DIR}/{relative}", data, overwrite=overwrite))
     return [change for change in changes if change is not None]

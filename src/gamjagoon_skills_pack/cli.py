@@ -10,7 +10,8 @@ from pathlib import Path
 
 from . import __version__
 from .installer import (
-    AGENT_FILE,
+    AGENT_FILES,
+    AGENT_ROLES,
     SKILL_DIR,
     SetupError,
     apply_changes,
@@ -40,7 +41,7 @@ def parser() -> argparse.ArgumentParser:
     )
     root.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     commands = root.add_subparsers(dest="command", required=True)
-    setup = commands.add_parser("setup", help="워크플로·리뷰어·줄바꿈을 한 번에 구성하고 검사")
+    setup = commands.add_parser("setup", help="워크플로·역할·줄바꿈을 한 번에 구성하고 검사")
     setup.add_argument("path", nargs="?", default=".")
     setup.add_argument("--minutes", type=int, default=180, help="실제 제작 시간 예산 (기본: 180분)")
     setup.add_argument(
@@ -50,7 +51,7 @@ def parser() -> argparse.ArgumentParser:
     setup.add_argument("--no-keyboard", action="store_true", help="기존 Enter 동작을 유지")
     init = commands.add_parser("init", help="새 폴더 또는 기존 프로젝트에 워크플로 설치")
     init.add_argument("path", nargs="?", default=".")
-    init.add_argument("--minutes", type=int, default=240, help="실제 제작 시간 예산 (기본: 240분)")
+    init.add_argument("--minutes", type=int, default=180, help="실제 제작 시간 예산 (기본: 180분)")
     init.add_argument("--dry-run", action="store_true", help="파일과 폴더를 만들지 않고 계획 출력")
     init.add_argument("--overwrite", action="store_true", help="충돌하는 관리 파일을 백업 후 교체")
     prompt = commands.add_parser("prompt", help="단계별 한국어 프롬프트 출력 (모델 호출 없음)")
@@ -74,8 +75,11 @@ def parser() -> argparse.ArgumentParser:
 def doctor(path: str) -> int:
     root = project_root(path)
     errors = 0
-    expected = ["AGENTS.md", "TASK.md", AGENT_FILE, f"{SKILL_DIR}/SKILL.md"]
+    expected = ["AGENTS.md", "TASK.md", *AGENT_FILES, f"{SKILL_DIR}/SKILL.md"]
     expected.extend(f"{SKILL_DIR}/references/{stage}.md" for stage in STAGES)
+    expected.extend(
+        f"{SKILL_DIR}/references/{name}.md" for name in ("parallel-work", "model-routing")
+    )
     for relative in expected:
         content, _ = read_existing(root, relative)
         if content:
@@ -87,27 +91,39 @@ def doctor(path: str) -> int:
     if instructions and b"GAMJAGOON-SKILLS-PACK:START" not in instructions:
         errors += 1
         print("FAIL AGENTS.md에 워크플로 관리 블록이 없습니다.")
-    agent_bytes, _ = read_existing(root, AGENT_FILE)
-    if agent_bytes:
+    for name, (_, _, sandbox) in AGENT_ROLES.items():
+        agent_bytes, _ = read_existing(root, f".codex/agents/{name}.toml")
+        if not agent_bytes:
+            continue  # Missing files are counted above.
         try:
             agent = tomllib.loads(agent_bytes.decode("utf-8"))
             required = ("name", "description", "developer_instructions")
-            if any(not isinstance(agent.get(key), str) or not agent[key] for key in required):
+            if any(
+                not isinstance(agent.get(key), str) or not agent[key].strip() for key in required
+            ):
                 raise ValueError("필수 에이전트 필드가 없습니다.")
-            if agent.get("sandbox_mode") != "read-only":
-                raise ValueError("리뷰어가 read-only가 아닙니다.")
-            if any(key in agent for key in ("model", "model_reasoning_effort", "service_tier")):
-                raise ValueError("리뷰어가 모델·추론·속도 설정을 지정하고 있습니다.")
-            print("PASS reviewer TOML: read-only, 모델·추론 설정 미지정")
+            if agent["name"] != name:
+                raise ValueError("에이전트 이름이 파일과 다릅니다.")
+            model = agent.get("model")
+            effort = agent.get("model_reasoning_effort")
+            if model not in ("gpt-6-luna", "gpt-6.1-sol"):
+                raise ValueError("지원 model은 gpt-6-luna 또는 gpt-6.1-sol입니다.")
+            if effort not in ("low", "medium", "high"):
+                raise ValueError("지원 model_reasoning_effort는 low, medium, high입니다.")
+            if agent.get("sandbox_mode") != sandbox:
+                raise ValueError(f"역할 sandbox_mode는 {sandbox}이어야 합니다.")
+            if "service_tier" in agent:
+                raise ValueError("역할에 service_tier를 지정할 수 없습니다.")
+            print(f"PASS agent TOML {name}: {model}, {effort}, {sandbox} (정적 설정)")
         except (ValueError, UnicodeError) as exc:
             errors += 1
-            print(f"FAIL reviewer TOML: {exc}")
+            print(f"FAIL agent TOML {name}: {exc}")
     for name in ("uv", "codex", "git"):
         status = "PASS" if shutil.which(name) else "WARN"
         print(f"{status} command {name} (존재만 확인)")
     if (root / "AGENTS.override.md").exists():
         print("WARN AGENTS.override.md가 있어 같은 경로의 AGENTS.md를 가릴 수 있습니다.")
-    print("NOT_RUN 실제 Codex 지침 탐색·서브에이전트 실행·시험환경 동작")
+    print("NOT_RUN 모델 이용 가능 여부·실제 Codex 지침 탐색·서브에이전트 실행·대상 환경 동작")
     return 1 if errors else 0
 
 
@@ -141,7 +157,8 @@ def main(argv: list[str] | None = None) -> int:
                 print("입력 키는 다음 Codex CLI 실행부터 확인하세요.")
             print(
                 "설치한 AGENTS.md, TASK.md, .agents/skills/timeboxed-workflow/SKILL.md를 "
-                "읽고 현재 대화에서 적용하세요. 과제 원문이 없으면 설치 완료 상태에서 기다리세요."
+                "읽고 현재 대화에서 자동 적용하세요. 과제 원문이 없으면 설치 완료 상태에서 "
+                "기다리세요."
             )
         elif args.command == "init":
             root = project_root(args.path)
@@ -155,7 +172,11 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"INSTALLED {len(changes)} changed files in {root}")
                 if backups:
                     print(f"BACKUP {root / Path(backups[0]).parent}")
-                print("다음: gsp prompt start → Codex에 전달. 설치는 모델을 실행하지 않습니다.")
+                print(
+                    "설치한 AGENTS.md, TASK.md, .agents/skills/timeboxed-workflow/SKILL.md를 "
+                    "읽고 현재 대화에서 자동 적용하세요. 과제 원문이 없으면 설치 완료 상태에서 "
+                    "기다리세요. 설치는 모델을 실행하지 않습니다."
+                )
         elif args.command == "prompt":
             if args.stage is None:
                 print("\n".join(STAGES))

@@ -41,7 +41,7 @@ def main() -> None:
         project = root / "project"
         run(executable, "init", str(project), "--dry-run")
         assert not project.exists(), "dry-run created the target"
-        run(executable, "init", str(project), "--minutes", "180")
+        run(executable, "init", str(project))
         run(executable, "keyboard", str(project), "--dry-run")
         assert not (project / ".codex/config.toml").exists()
         run(executable, "keyboard", str(project))
@@ -49,6 +49,24 @@ def main() -> None:
             'submit = ["alt-enter", "ctrl-enter"]' in (project / ".codex/config.toml").read_text()
         )
         assert "180" in (project / "TASK.md").read_text()
+        roles = {
+            "gsp-triage": ("gpt-6-luna", "low", "read-only"),
+            "gsp-researcher": ("gpt-6-luna", "medium", "read-only"),
+            "gsp-worker": ("gpt-6-luna", "medium", "workspace-write"),
+            "gsp-integrator": ("gpt-6.1-sol", "medium", "workspace-write"),
+            "gsp-debugger": ("gpt-6.1-sol", "high", "workspace-write"),
+            "gsp-reviewer": ("gpt-6.1-sol", "medium", "read-only"),
+        }
+        for name, (model, effort, sandbox) in roles.items():
+            role = tomllib.loads((project / f".codex/agents/{name}.toml").read_text())
+            assert role["name"] == name
+            assert role["model"] == model
+            assert role["model_reasoning_effort"] == effort
+            assert role["sandbox_mode"] == sandbox
+        for reference in ("parallel-work", "model-routing"):
+            assert (
+                project / f".agents/skills/timeboxed-workflow/references/{reference}.md"
+            ).is_file()
         assert "NOT_RUN" in run(executable, "doctor", str(project))
         assert run(executable, "prompt", "start").strip()
         assert "frontend-design" in run(executable, "skills", "list")
