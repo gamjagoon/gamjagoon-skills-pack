@@ -6,81 +6,82 @@ temporary source directory, preserve the user's original project path, and run
 `bash install.sh --dry-run <project-path>` followed by `bash install.sh <project-path>`
 when the preview succeeds. Use this script instead of manually copying files or
 using the generic skill installer for individual folders. Preserve custom conflicts;
-use `--overwrite` only after reviewing the differences. If Codex protects `.agents`,
+use `--overwrite` only after reviewing the differences. If Codex protects `.agents` or `.codex`,
 use its normal approval flow and report a blocked installation if approval is unavailable.
-After installation, read the target AGENTS and skills in the current conversation.
+After installation, read the target AGENTS, skills, and reviewer definition in the current conversation.
+Reading the definition is not proof that the native agent was loaded; verify availability or report the limitation.
 The script installs only the managed block below, not this source-only entrypoint.
 
 <!-- GAMJAGOON-SKILLS-PACK:START -->
 # gamjagoon-skills-pack
 
-## 작업 흐름
+## Workflow
 
-개발 작업은 아래 순서로 진행한다. 현재 단계의 스킬을 읽고 산출물과 미해결 사항을 다음 단계에 전달한다. 사용자에게 단계별 호출을 요구하지 않는다. 사용자가 단계 하나만 요청하면 해당 단계까지만 수행한다. 단순 질문·작은 수정은 필요한 단계만 적용하고 생략 이유를 짧게 남긴다.
+Carry out development work in the following order. Read the skill or reviewer contract for the current stage and pass its outputs and unresolved issues to the next stage. Do not require the user to invoke each stage. If the user requests only one stage, perform only up to that stage. For simple questions and small changes, apply only the necessary stages and briefly record why any were omitted.
 
-| 순서 | 스킬 | 산출물 |
+| Order | Skill or agent | Output |
 | --- | --- | --- |
-| 1 | [요구사항 작성](.agents/skills/gsp-requirements/SKILL.md) | 원문 근거, 범위, 요구사항별 완료 기준 |
-| 2 | [요구사항 리뷰](.agents/skills/gsp-requirements-review/SKILL.md) | 누락·모순·검증 가능성 검토 |
-| 3 | [아키텍처](.agents/skills/gsp-architecture/SKILL.md) | 최소 구조, 인터페이스, 구현 작업·검증 계획 |
-| 4 | [아키텍처 리뷰](.agents/skills/gsp-architecture-review/SKILL.md) | 요구사항 충족, 실행 가능성·복잡성 검토 |
-| 5 | [개발](.agents/skills/gsp-development/SKILL.md) | 구현, 실행·테스트 결과 |
-| 6 | [개발 리뷰](.agents/skills/gsp-development-review/SKILL.md) | 결함·회귀 검토, 수정·재검증, 사용법과 한계 |
+| 1 | [Requirements writing](.agents/skills/gsp-requirements/SKILL.md) | Source evidence, scope, completion criteria for each requirement |
+| 2 | [gsp-reviewer](.codex/agents/gsp-reviewer.toml), mode `requirements` | Review of omissions, contradictions, and verifiability |
+| 3 | [Architecture](.agents/skills/gsp-architecture/SKILL.md) | Minimal structure, interfaces, implementation work and verification plan |
+| 4 | [gsp-reviewer](.codex/agents/gsp-reviewer.toml), mode `architecture` | Review of requirements coverage, feasibility, and complexity |
+| 5 | [Development](.agents/skills/gsp-development/SKILL.md) | Implementation, execution and test results |
+| 6 | [gsp-reviewer](.codex/agents/gsp-reviewer.toml), mode `development` | Review of defects and regressions, fixes and revalidation, usage and limitations |
 
-시작할 때 현재 요청이 기존 작업의 계속인지 별도 작업인지 원문·미완료 항목과 대조한다. 같은 작업이면 유효한 산출물부터 이어가고, 별도 작업이면 새 제목과 시작·마감 구획을 만든다. 완료된 작업의 PASS와 시간을 새 요청에 재사용하지 않는다. 실제 제작·개발 작업의 기록은 기존 위치를 우선하며, 없으면 `TASK.md` 하나에 아래 내용을 모은다. 단순 질의응답에는 작업 기록·새 마감을 만들지 않는다. 설치만 요청받았을 때는 TASK나 제작 작업을 시작하지 않는다.
+At the start, compare the current request with the source and unfinished items to determine whether it continues existing work or is a separate task. For the same task, continue from valid outputs; for a separate task, create a new title and start/deadline section. Do not reuse the PASS or time of completed work for a new request. Prefer the existing location for records of actual creation or development work; if none exists, collect the following in one `TASK.md`. Do not create a work record or new deadline for simple questions and answers. If asked only to install, do not start a TASK or creation work.
 
-- 현재 작업: 원문 또는 원문 위치, 요청 변경 사항, 범위·예산, 현재 단계와 다음 행동.
-- 요구사항 → 설계/작업 → 실제 검증의 연결. 기존 기록·ID는 유지하고 변경분을 구분한다.
-- 각 리뷰: 읽은 원문·산출물 경로와 기준 상태, 검토 방식, 판정과 발견 사항, 수정·재확인 근거.
+- Current task: the source text or its location, changes to the request, scope and budget, current stage, and next action.
+- The connection from requirements → design/work → actual verification. Keep existing records and IDs and distinguish changes.
+- Each review: paths of the source and outputs read and their baseline state, review method, verdict and findings, and evidence for fixes and rechecks.
 
-이미 승인된 작업은 단계마다 재승인을 받지 않는다. 파일·도구로 확인할 수 있는 사실은 조사하고, 결과를 바꾸는 중요한 사용자 결정만 묻는다. 그 결정이나 차단 결함에 의존하지 않는 작업은 계속한다.
+Do not seek renewed approval at each stage for work already approved. Investigate facts that can be checked with files or tools, and ask only for important user decisions that change the outcome. Continue work that does not depend on that decision or a blocking defect.
 
-## 모든 단계의 grilling
+## Grilling in every stage
 
-여섯 단계 모두 [gsp-grilling](.agents/skills/gsp-grilling/SKILL.md)을 함께 적용한다. 원문·파일·실행으로 확인할 사실은 조사하고, 결과를 바꾸는 모호한 의도·정책·기대 동작은 사용자에게 질문한다. 선행 결정이 끝난 질문을 추천안과 함께 묻고 답변에 따라 다음 라운드를 이어간다. 질문을 기록만 하고 넘어가거나 추천안을 답변으로 간주하지 않는다.
+Apply [gsp-grilling](.agents/skills/gsp-grilling/SKILL.md) alongside all six stages. Investigate facts verifiable from the source, files, or execution, and ask the user about ambiguous intent, policy, or expected behavior that changes the outcome. Ask questions whose prerequisite decisions have been made, together with recommendations, and continue to the next round according to the answers. Do not merely record questions and move on or treat recommendations as answers.
 
-답변에 의존하는 작업만 보류하며 독립 작업은 계속한다. 리뷰·작업 서브에이전트의 질문은 주 작업자가 취합해 실제 사용자에게 전달한다. 기존 답변은 재사용하고, 필요한 답변이 모이면 이미 허용된 작업을 재개한다. 별도 질문 프롬프트나 단계별 재승인은 요구하지 않는다.
+Hold only work dependent on an answer and continue independent work. The primary worker collects questions from review and work subagents and conveys them to the actual user. Reuse existing answers and resume already authorized work once the necessary answers are available. Do not require a separate question prompt or renewed approval at each stage.
 
-## 리뷰와 단계 전환
+## Reviews and stage transitions
 
-리뷰는 가능한 경우 작성자와 다른 읽기 전용 서브에이전트에 맡긴다. 원문·현재 산출물의 실제 경로, 관련 요구사항 ID, 변경 범위, 실행 근거와 질문을 전달한다. 리뷰어는 요약만 믿지 않고 해당 파일을 직접 읽으며, 검토한 기준 상태를 기록한다. Git이면 commit과 관련 working diff, 비 Git이면 해당 파일의 확인 시점·변경 내역처럼 상태를 식별할 근거를 쓴다. 리뷰 중 대상이 바뀌면 변경된 부분을 재확인한다.
+Use the native `gsp-reviewer` agent for all three review stages, separate from the author. Its single definition is [.codex/agents/gsp-reviewer.toml](.codex/agents/gsp-reviewer.toml). Request agent type `gsp-reviewer` with mode `requirements`, `architecture`, or `development`; reuse the same reviewer conversation within a task when possible, while passing current artifacts and decisions on every handoff. Do not create three different reviewer roles. Provide the absolute project root, explicit mode and review scope, actual paths of the original text and current outputs, relevant requirement IDs, baseline state, change scope, execution evidence, and open questions with existing answers. The reviewer returns findings; the lead handles user questions, fixes, and stage progression. The reviewer does not delegate another reviewer or implement fixes. The reviewer reads the relevant files directly instead of relying only on summaries and records the baseline reviewed. Give evidence identifying the state, such as the commit and relevant working diff for Git, or the time of inspection and change history of the relevant files for non-Git work. If the subject changes during review, recheck the changed parts.
 
-| 판정 | 의미와 주 작업자의 행동 |
+| Verdict | Meaning and primary worker's action |
 | --- | --- |
-| PASS | 해당 검토 범위에 차단 사항이 없고 판정 근거가 있음. 유효한 산출물을 다음 단계로 전달한다. |
-| WARN | 비차단 제안이나 검토 한계가 있음. 영향과 처리 여부를 남기고 진행한다. |
-| FAIL | 필수 동작 결함 또는 단계 진행에 필요한 결정·근거가 빠짐. 그 항목에 의존하는 후속 작업과 완료 판정을 보류한다. |
+| PASS | There are no blockers in the review scope and evidence supports the verdict. Pass valid outputs to the next stage. |
+| WARN | There are nonblocking suggestions or review limitations. Record their impact and whether they were addressed, then proceed. |
+| FAIL | A required behavior is defective, or a decision or evidence needed to advance the stage is missing. Hold subsequent work dependent on that item and the completion verdict. |
 
-발견에는 ID, 관련 요구사항, 위치·발생 조건·영향, 차단 여부를 적는다. 미확인은 확정 결함과 구분한다. 필요한 원문·실행 근거가 없는데 누락 없음·실행 성공으로 판정하지 않는다. 코드만 검토하라는 요청이면 판정 범위를 코드 검토로 제한하고 실행 여부를 따로 적는다.
+For each finding, record its ID, related requirements, location, triggering conditions, impact, and whether it is blocking. Distinguish unverified matters from confirmed defects. Do not conclude that nothing is missing or execution succeeded without the necessary source and execution evidence. If asked to review code only, limit the verdict to code review and separately state whether execution was performed.
 
-주 작업자는 중요한 발견마다 `수정 위치 / 원래 재현 조건의 재확인 / 결과 / 확인자`를 남긴다. 수정과 영향 부분만 재확인하며 전체 리뷰를 관성적으로 반복하지 않는다. 작성자만 재검증했으면 이전 리뷰의 PASS를 최신 결과처럼 바꾸지 말고 독립 재리뷰 미실행을 적는다. 재현과 직접 관련된 확인 없이 발견을 닫지 않는다.
+For each significant finding, the primary worker records `fix location / recheck of the original reproduction conditions / result / verifier`. Recheck only the fix and affected parts; do not repeat the entire review by habit. If only the author revalidated, do not change the earlier review's PASS as if it represented the latest result; state that independent re-review was not performed. Do not close a finding without checks directly related to reproducing it.
 
-서브에이전트를 사용할 수 없으면 자체 점검으로 진행하고 독립 리뷰 미실행을 명시한다. 요구사항이나 인터페이스가 바뀌면 영향을 받는 설계·구현·검증·리뷰만 다시 연다. 최종 완료는 현재 필수 요구사항의 실제 근거와 미해결 차단 사항으로 판단한다. 리뷰의 PASS나 테스트 개수만으로 완료를 선언하지 않는다.
+If the native role is unavailable, report that it was not loaded. When independent subagents with authorized model settings are available, provide one with the same reviewer contract and explicit mode, and label it as a fallback rather than a native `gsp-reviewer` run. If independent subagents are unavailable, proceed with a self-check and explicitly state that independent review was not performed. Reading the TOML or a successful installation alone does not establish native-agent execution. The read-only review contract does not create a separate security sandbox; permissions are inherited, and checks that write files require an isolated location. If requirements or interfaces change, reopen only the affected design, implementation, verification, and review. Judge final completion by the actual evidence for current mandatory requirements and unresolved blockers. Do not declare completion based only on a review PASS or test count.
 
-## 시간과 범위
+## Time and scope
 
-사용자 지정 예산·마감과 기존 진행 기록을 우선한다. 별도 지시가 없는 실제 개발의 기본 예산은 180분이다. 시작할 때 실제 시계로 시작·마감·시간대를 기록하고 재개해도 초기화하지 않는다. 시계를 확인할 수 없으면 시각을 지어내지 않는다.
+Prioritize the user's specified budget and deadline and existing progress records. The default budget for actual development without other instructions is 180 minutes. At the start, use an actual clock to record the start, deadline, and time zone, and do not reset them on resumption. Do not invent times if the clock cannot be checked.
 
-기본 예산에서 요구사항·아키텍처와 두 짧은 리뷰는 첫 20분 안에 정리한다. 60분까지 핵심 흐름을 실행하고, 130분부터 검증·개발 리뷰와 중요한 수정에 집중하며, 마지막 15분은 최종 실행·사용법·인계에 남긴다. 다른 예산이면 비례 조정한다. 일찍 끝나면 바로 인계하며 고정 대기하지 않는다.
+Under the default budget, organize requirements, architecture, and the two short reviews within the first 20 minutes. Execute the core flow by 60 minutes, focus on verification, development review, and significant fixes from 130 minutes, and reserve the final 15 minutes for final execution, usage, and handoff. Scale proportionally for a different budget. If finished early, hand off immediately without a fixed wait.
 
-핵심 실행이 늦어지면 막힌 원인, 남은 필수 항목, 가장 작은 실행 경로를 재평가한다. 부가 기능을 미루고 검증·인계 시간을 지킨다. 필수 범위·성공 기준을 바꾸려면 사용자 결정을 받으며, 임의로 삭제하거나 mock 결과로 대체하지 않는다. 사용자가 정한 하드 마감에는 완료·미완료와 재현 방법을 남겨 인계한다. 별도 하드 마감이 없는 기본 예산은 재계획 기준이며, 초과 사실과 남은 일을 알리고 완료를 꾸며내지 않는다.
+If core execution is delayed, reassess the cause of the blockage, remaining mandatory items, and smallest executable path. Defer additional features and protect verification and handoff time. Obtain the user's decision before changing mandatory scope or success criteria; do not arbitrarily remove them or substitute mock results. At a user-defined hard deadline, hand off with completed and unfinished work and reproduction instructions. The default budget without a separate hard deadline is a replanning benchmark: report any overrun and remaining work, and do not fabricate completion.
 
-## 모델 활용
+## Model use
 
-아래는 사용 가능한 에이전트 도구에서 역할을 선택할 때의 권장값이다. 별도 역할 TOML은 설치하지 않으며, 이 문서가 모델을 강제로 전환하지는 않는다. 현재 주 모델·전역 설정·사용자의 명시적 선택을 유지한다.
+The following are recommendations for selecting roles in available agent tools. The pack installs one project-local role, `gsp-reviewer`, configured for GPT-6.1 Sol (`gpt-6.1-sol`) with medium reasoning. That role file sets the review agent's model and effort; it does not change the primary model, global settings, or service tier. Preserve explicit user choices; if they conflict with the bundled role settings, resolve that conflict before invoking it rather than claiming a spawn override changed the role file's model.
 
-| 작업 | 모델 | effort |
+| Work | Model | effort |
 | --- | --- | --- |
-| 좁은 사실 추출·로그 분류 | GPT-6 Luna (`gpt-6-luna`) | low |
-| 조사·탐색·명확한 구현·작은 실험 | GPT-6 Luna (`gpt-6-luna`) | medium |
-| 주 작업·아키텍처·통합·세 단계의 리뷰 | GPT-6.1 Sol (`gpt-6.1-sol`) | medium |
-| 모호한 디버깅·위험한 변경 | GPT-6.1 Sol (`gpt-6.1-sol`) | high |
+| Narrow fact extraction and log triage | GPT-6 Luna (`gpt-6-luna`) | low |
+| Research, exploration, clear implementation, and small experiments | GPT-6 Luna (`gpt-6-luna`) | medium |
+| Primary work, architecture, integration, and reviews of the three stages | GPT-6.1 Sol (`gpt-6.1-sol`) | medium |
+| Ambiguous debugging and risky changes | GPT-6.1 Sol (`gpt-6.1-sol`) | high |
 
-문제에 맞는 역할로 바로 배정한다. 값싼 모델부터 순서대로 거치거나 고정 병렬 수를 두지 않는다. 모델·effort 지정 기능이 없으면 현재 사용 가능한 설정으로 수행하고 실제 사용 모델과 권장값을 혼동하지 않는다. 지정 모델을 사용할 수 없으면 한계를 알리고 사용자에게 이미 허용받은 대안만 사용한다. 선택에 막히지 않는 주 작업은 계속한다.
+Assign the role suited to the problem directly. Do not route sequentially from a cheaper model or set a fixed concurrency count. If model and effort selection is unavailable, work with the currently available settings and do not confuse the model actually used with the recommendation. If a specified model is unavailable, report the limitation and use only alternatives already authorized by the user. Continue primary work that is not blocked by the selection.
 
-## 병렬 작업과 근거
+## Parallel work and evidence
 
-독립적인 읽기 전용 조사는 원본을 공유할 수 있다. 쓰기 실험은 별도 worktree 또는 필요한 파일만 복사한 임시 폴더에서 수행한다. 병렬 작업 전 개발 스킬의 [격리 절차](.agents/skills/gsp-development/references/parallel-work.md)를 읽는다. 담당 파일·실제 cwd·기준 상태·출력·환경·포트·완료 기준을 명시하고, 한 명의 통합 담당자만 검증된 변경을 반영한다.
+Independent read-only investigations may share the original. Perform experiments that write files in a separate worktree or a temporary folder containing copies of only the necessary files. Before parallel work, read the development skill's [isolation procedure](.agents/skills/gsp-development/references/parallel-work.md). Specify the owned files, actual cwd, baseline state, outputs, environment, ports, and completion criteria; only one integration owner applies verified changes.
 
-원본의 미커밋 변경과 다른 작업자의 수정을 보존한다. 실제 실행·정적 검사·모의 결과를 구분하고 실행하지 않은 검증을 성공으로 표시하지 않는다. 질문용 gsp-grilling은 팩에 포함하며, 그 밖의 외부 스킬을 기본으로 추가하지 않는다. 프로젝트·플랫폼 지침과 사용자가 허용한 작업 범위를 따른다.
+Preserve uncommitted changes in the original and other workers' edits. Distinguish actual execution, static checks, and mock results; do not mark unperformed verification as successful. Include gsp-grilling for questions in the pack, and do not add other external skills by default. Follow project and platform instructions and the scope of work authorized by the user.
 <!-- GAMJAGOON-SKILLS-PACK:END -->
