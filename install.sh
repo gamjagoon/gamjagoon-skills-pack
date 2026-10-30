@@ -7,7 +7,7 @@ dry_run=0 overwrite=0 target_arg= target_set=0
 usage() {
     cat <<'HELP'
 Usage: bash install.sh [--dry-run] [--overwrite] [TARGET]
-Install the AGENTS.md managed block, four skills, and native gsp-reviewer agent locally.
+Install the AGENTS.md managed block, five skills, and native gsp-reviewer agent locally.
 TARGET defaults to the current directory. No downloads or model calls occur.
   --dry-run    Check conflicts and show changes without creating TARGET
   --overwrite  Back up and replace differing content; retire three legacy review skills
@@ -56,6 +56,7 @@ rels=(AGENTS.md
     .agents/skills/gsp-grilling/SKILL.md
     .agents/skills/gsp-requirements/SKILL.md
     .agents/skills/gsp-architecture/SKILL.md
+    .agents/skills/gsp-tasks/SKILL.md
     .agents/skills/gsp-development/SKILL.md
     .agents/skills/gsp-development/references/parallel-work.md
     .codex/agents/gsp-reviewer.toml
@@ -278,4 +279,4 @@ for rel in "${changed[@]}"; do
 done
 success=1
 [[ -z $backup ]] || printf 'Backups: %s\n' "$backup"
-printf 'Installed four skills, the native gsp-reviewer agent, and the managed AGENTS block.\n'
+printf 'Installed five skills, the native gsp-reviewer agent, and the managed AGENTS block.\n'

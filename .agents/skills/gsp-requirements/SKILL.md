@@ -15,7 +15,7 @@ Send the questions and recommendations to the actual user, and wait only on the 
 
 ## What to write
 
-Prefer the existing document location for the work record; if none exists, use the requirements section of `TASK.md`.
+Write `spec/requirement.md` for new work. Preserve valid existing records for a continuation and respect explicit document locations; do not migrate old documents just to adopt this layout.
 
 - Goal, target users, inputs and outputs, required scope, and exclusions.
 - Identify every mandatory item in the original text as R1, R2, and so on, and link it to its source or location in the original text.
@@ -30,11 +30,11 @@ Do not arbitrarily settle implementation technology as a requirement or add func
 
 ## Problem, experiment, and completion scope
 
-For substantive work, establish the project brief defined in AGENTS.md in the existing work record or `TASK.md` (with its matching HTML view): observed problem and affected users, current baseline, measurable outcome, constraints, scope/non-goals, unresolved assumptions, and whether the request ends at investigation, PoC, or the agreed finished deliverable (PoR). Distinguish unknown limits from unlimited resources. Link PoC hypotheses and PoR acceptance criteria to requirement IDs; do not require a new PoC when existing evidence is sufficient.
+For substantive work, establish the project brief defined in AGENTS.md in `spec/requirement.md` (with its matching HTML view, or the retained continuation record): observed problem and affected users, current baseline, measurable outcome, constraints, scope/non-goals, unresolved assumptions, and whether the request ends at investigation, PoC, or the agreed finished deliverable (PoR). Distinguish unknown limits from unlimited resources. Link PoC hypotheses and PoR acceptance criteria to requirement IDs; do not require a new PoC when existing evidence is sufficient.
 
 ## Human-reviewable deliverables
 
-Follow the "Documents for human review" contract in the project AGENTS.md. The lead maintains a Markdown source and a matching, self-contained HTML view (default `TASK.md` and `TASK.html`), using the user's language and existing document locations. Publish the requirements and acceptance criteria, original-text references, unresolved questions with recommendations, and confirmed decisions in both views. If only requirements were requested, do not fill later stages with invented results. Keep both views synchronized, preserve unrelated files, and link both in the user-facing handoff. Respect explicit format and no-write constraints; do not claim an HTML file exists if it was not created.
+Follow the "Documents for human review" contract in the project AGENTS.md. The lead maintains a Markdown source and a matching, self-contained HTML view (default `spec/requirement.md` and `spec/requirement.html`), using the user's language. Preserve existing project documents without automatic migration; explicit locations and continuation records follow AGENTS.md. Publish the requirements and acceptance criteria, original-text references, unresolved questions with recommendations, and confirmed decisions in both views. If only requirements were requested, do not fill later stages with invented results. Keep both views synchronized, preserve unrelated files, and link both in the user-facing handoff. Respect explicit format and no-write constraints; do not claim an HTML file exists if it was not created.
 
 ## Completion and handoff
 

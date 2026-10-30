@@ -1,11 +1,11 @@
 ---
 name: gsp-grilling
-description: Resolve ambiguities requiring user decisions through question rounds during requirements, architecture, development, and their reviews. Use when unresolved decisions would change the outcome; do not ask again about facts to investigate or decisions already answered.
+description: Resolve ambiguities requiring user decisions through question rounds during requirements, architecture, task planning, development, and their reviews. Use when unresolved decisions would change the outcome; do not ask again about facts to investigate or decisions already answered.
 ---
 
 # Grilling — asking about ambiguous decisions
 
-This is a supporting skill shared by the six work stages. Apply grilling's question rounds by dependency to this pack's stage progression and independent reviews. It is not a separate seventh work stage and does not require an external grilling installation.
+This is a supporting skill shared by the eight work stages. Apply grilling's question rounds by dependency to this pack's stage progression and independent reviews. It is not a separate work stage and does not require an external grilling installation.
 
 ## Distinguish first
 
@@ -31,6 +31,6 @@ Example question:
 - Review subagents send the lead worker their questions, options, reasons for recommendations, and affected requirements. The lead worker removes duplicates, asks the actual user, and conveys the answers to the relevant worker. When reviewing directly without a lead worker, ask directly.
 - Distinguish ambiguities requiring user judgment from reproduced implementation defects. Do not seek renewed approval to fix a bug that violates an already clear contract. Do not assume an ambiguous expected value is correct and produce a PASS or confirmed defect.
 - The lead worker records the question ID, related requirements, answer or waiting status, decision, and affected stages in the existing work record. Reuse answers to questions with the same meaning in later stages; ask only about changed parts when conditions change. Do not create a new record file for simple questions and answers.
-- If answers change requirements, interfaces, or completion criteria, update only the affected design, code, verification, and reviews. If a mandatory decision remains unresolved, do not declare that part complete.
+- If answers change requirements, interfaces, or completion criteria, update only the affected design, task plan, code, verification, and reviews. If a mandatory decision remains unresolved, do not declare that part complete.
 
 For a substantive task with review documents, the lead records questions, recommendations, answers or waiting status, and affected work in the Markdown source and refreshes its HTML view under the project AGENTS.md document contract. Keep undecided questions visible in both views and deliver them to the actual user; publishing a document is not a substitute for asking. Do not create paired documents for a simple question-and-answer exchange alone.
