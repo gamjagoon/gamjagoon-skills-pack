@@ -108,7 +108,7 @@ def _set_value(text: str, table: tuple[str, ...], key: str, value: list[str]) ->
     return updated
 
 
-def plan_keyboard(root: Path, *, enter: str = "newline") -> list[Change]:
+def plan_keyboard(root: Path, *, enter: str = "newline", overwrite: bool = False) -> list[Change]:
     ensure_project_scope(root)
     if enter not in PROFILES:
         raise SetupError(f"알 수 없는 Enter 프로필입니다: {enter}")
@@ -126,7 +126,7 @@ def plan_keyboard(root: Path, *, enter: str = "newline") -> list[Change]:
     if original != updated:
         result.append(Change(CONFIG_FILE, original, updated, mode))
     ignored = managed_change(
-        root, ".gitignore", f"{STATE_DIR}/\n".encode(), comment="#", overwrite=False
+        root, ".gitignore", f"{STATE_DIR}/\n".encode(), comment="#", overwrite=overwrite
     )
     if ignored is not None:
         result.append(ignored)

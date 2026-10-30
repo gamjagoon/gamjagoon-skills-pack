@@ -40,6 +40,14 @@ def parser() -> argparse.ArgumentParser:
     )
     root.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     commands = root.add_subparsers(dest="command", required=True)
+    setup = commands.add_parser("setup", help="워크플로·리뷰어·줄바꿈을 한 번에 구성하고 검사")
+    setup.add_argument("path", nargs="?", default=".")
+    setup.add_argument("--minutes", type=int, default=180, help="실제 제작 시간 예산 (기본: 180분)")
+    setup.add_argument(
+        "--dry-run", action="store_true", help="모든 충돌을 확인하고 변경 계획만 출력"
+    )
+    setup.add_argument("--overwrite", action="store_true", help="관리 파일 충돌을 백업 후 교체")
+    setup.add_argument("--no-keyboard", action="store_true", help="기존 Enter 동작을 유지")
     init = commands.add_parser("init", help="새 폴더 또는 기존 프로젝트에 워크플로 설치")
     init.add_argument("path", nargs="?", default=".")
     init.add_argument("--minutes", type=int, default=240, help="실제 제작 시간 예산 (기본: 240분)")
@@ -106,7 +114,36 @@ def doctor(path: str) -> int:
 def main(argv: list[str] | None = None) -> int:
     args = parser().parse_args(argv)
     try:
-        if args.command == "init":
+        if args.command == "setup":
+            from .setup import plan_setup
+
+            root = project_root(args.path)
+            changes = plan_setup(
+                root,
+                minutes=args.minutes,
+                overwrite=args.overwrite,
+                keyboard=not args.no_keyboard,
+            )
+            for change in changes:
+                print(f"{change.action} {change.relative}")
+            if args.dry_run:
+                print(f"DRY_RUN {len(changes)} files; 파일·폴더 변경 없음")
+                return 0
+            backups = apply_changes(root, changes)
+            if backups:
+                print(f"BACKUP {root / Path(backups[0]).parent}")
+            status = doctor(str(root))
+            if status:
+                return status
+            print(f"SETUP {len(changes)} changed files in {root}; 설치 파일 검사 완료")
+            if not args.no_keyboard:
+                print("KEYS Enter=줄바꿈; Alt+Enter=전송 (지원 시 Ctrl+Enter도 가능)")
+                print("입력 키는 다음 Codex CLI 실행부터 확인하세요.")
+            print(
+                "설치한 AGENTS.md, TASK.md, .agents/skills/timeboxed-workflow/SKILL.md를 "
+                "읽고 현재 대화에서 적용하세요. 과제 원문이 없으면 설치 완료 상태에서 기다리세요."
+            )
+        elif args.command == "init":
             root = project_root(args.path)
             changes = plan_init(root, minutes=args.minutes, overwrite=args.overwrite)
             for change in changes:

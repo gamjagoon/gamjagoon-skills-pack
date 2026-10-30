@@ -7,12 +7,15 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import tomllib
 from pathlib import Path
 
 
 def main() -> None:
     repository = Path(__file__).resolve().parents[1]
-    wheels = list((repository / "dist").glob("gamjagoon_skills_pack-*.whl"))
+    project = tomllib.loads((repository / "pyproject.toml").read_text())
+    version = project["project"]["version"]
+    wheels = list((repository / "dist").glob(f"gamjagoon_skills_pack-{version}-*.whl"))
     if len(wheels) != 1:
         raise SystemExit("Run uv build first; dist/ must contain exactly one matching wheel.")
     uv = shutil.which("uv")
@@ -53,6 +56,13 @@ def main() -> None:
         assert run(
             uv, "tool", "run", "--from", str(wheels[0]), "gsp", "prompt", "plan-review"
         ).strip()
+        complete = root / "complete-project"
+        run(executable, "setup", str(complete), "--dry-run")
+        assert not complete.exists()
+        assert "SETUP" in run(executable, "setup", str(complete))
+        assert (complete / ".codex/config.toml").is_file()
+        assert (complete / ".agents/skills/timeboxed-workflow/SKILL.md").is_file()
+        assert "0 changed files" in run(executable, "setup", str(complete))
     print("PASS isolated uv tool install, bundled resources, init, doctor, prompts, and uvx path")
 
 

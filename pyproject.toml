@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "gamjagoon-skills-pack"
-version = "0.1.0"
+version = "0.2.0"
 description = "A uv-installable Codex workflow starter for hackathons and timeboxed development"
 readme = "README.md"
 requires-python = ">=3.11"

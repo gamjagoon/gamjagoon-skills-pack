@@ -2,6 +2,9 @@
 
 ## CLI
 
+- 사용자 진입 문장은 `gamjagoon-skills-pack 설치해줘`다. 저장소의 README/INSTALL.md/llms.txt와 AGENTS.md가 설치 에이전트의 공개 진입점을 제공한다. 빈 폴더에서 아직 설치되지 않은 지침을 자동 탐색한다고 가정하지 않는다.
+- `gsp setup [PATH] [--minutes N] [--dry-run] [--overwrite] [--no-keyboard]`: 기본 180분, 워크플로·리뷰어·줄바꿈을 한 번에 사전 검사해 적용하고 doctor를 수행한다. 설치 에이전트가 실행하며 사용자는 명령을 외우지 않는다.
+
 - 패키지 `gamjagoon-skills-pack`, 실행 명령 `gsp` 및 `gamjagoon-skills-pack`.
 - Python 3.11+ 표준 라이브러리; 빌드 도구는 hatchling, 개발 검증은 uv/pytest/ruff.
 - `gsp init [PATH] [--minutes N] [--dry-run] [--overwrite]`: 자체 워크플로와 리뷰어 설치.

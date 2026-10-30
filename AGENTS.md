@@ -1,3 +1,15 @@
+# Agent installation entrypoint
+
+If the user asks to install **gamjagoon-skills-pack** into their working project,
+read [INSTALL.md](INSTALL.md) and perform that setup in the user's original project
+directory. This repository is the installation source, not the target project.
+The user does not need to type or memorize shell commands. Keep any source checkout
+in a temporary directory or uv's cache. After installation, read the installed
+project instructions in the current chat. Do not begin solving a task the user has
+not provided.
+
+The instructions below apply when developing this repository itself.
+
 # Development instructions
 
 - Requirements live in `docs/requirements.md`; implementation choices live in `docs/design.md`.
