@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling>=1.26,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "gamjagoon-skills-pack"
+version = "0.1.0"
+description = "A uv-installable Codex workflow starter for hackathons and timeboxed development"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{ name = "gamjagoon" }]
+keywords = ["codex", "agent-skills", "hackathon", "prompts", "uv"]
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/gamjagoon/gamjagoon-skills-pack"
+Issues = "https://github.com/gamjagoon/gamjagoon-skills-pack/issues"
+
+[project.scripts]
+gsp = "gamjagoon_skills_pack.cli:main"
+gamjagoon-skills-pack = "gamjagoon_skills_pack.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=8,<10", "ruff>=0.11,<1"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/gamjagoon_skills_pack"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
