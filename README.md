@@ -2,7 +2,7 @@
 
 **요구사항 작성부터 개발·리뷰까지 이어가는 Codex 작업 환경입니다.**
 
-`AGENTS.md`가 작업 순서를 안내하고, **스킬 5개와 리뷰 에이전트 1개**가 역할을 나눕니다.
+`AGENTS.md`가 작업 순서를 안내하고, **스킬 6개와 리뷰 에이전트 1개**가 역할을 나눕니다.
 요구사항·아키텍처·작업 정리·구현은 각각의 스킬로 진행하며, 네 구간의 리뷰는 하나의 `gsp-reviewer`가 담당합니다.
 모호한 결정은 `gsp-grilling`을 통해 사용자에게 질문합니다.
 
@@ -20,6 +20,8 @@
 
 Codex가 저장소의 `install.sh`를 읽고 현재 프로젝트에 적용합니다. 설치 명령을 외울 필요가 없으며,
 Python·uv·npm 패키지도 필요하지 않습니다. 설치 스크립트는 Linux/WSL의 Bash와 기본 Unix 도구를 사용합니다.
+
+설치 후 Task DAG 검사·라우팅 도구를 실행할 때는 Python 3.9 이상이 필요하며 외부 Python 패키지는 사용하지 않습니다.
 
 이름으로 저장소를 찾지 못하면 [저장소 주소](https://github.com/gamjagoon/gamjagoon-skills-pack)를 함께 전달하세요.
 새 스킬이나 에이전트가 보이지 않으면 Codex에서 프로젝트의 신뢰 상태를 확인하고 다시 실행하세요.
@@ -55,10 +57,23 @@ Python·uv·npm 패키지도 필요하지 않습니다. 설치 스크립트는 L
 기존 프로젝트의 문서를 이 구조로 자동 변환하거나 이동하지 않습니다. 이어 하는 작업은 유효한 기존 기록을 참조합니다.
 설치만 요청했을 때는 개발 작업을 시작하지 않습니다.
 
+### 기존 프로젝트를 GSP로 이어 개발하기
+
+GSP 없이 개발하던 프로젝트라면 설치 후 다음과 같이 요청합니다.
+
+> gsp-adopt로 이 프로젝트의 코드와 흩어진 문서를 조사해서 요구사항, 아키텍처, Task를 정리해줘.
+
+`gsp-adopt`는 CodeGraph 인덱스를 확인하고, 없으면 생성한 뒤 실제 코드 질의와 기존 자료 대조를 통해
+`spec/requirement.md`, `spec/architecture.md`, `spec/tasks.md`를 연결합니다. 유효한 기존 문서와 ID는 보존하고,
+현재 구현·승인된 의도·미검증 내용을 구분합니다. 문서 정리와 인계까지 수행하며 기능 구현은 시작하지 않습니다.
+
+CodeGraph 도구가 준비되어 있어야 합니다. 도구가 없거나 인덱스 생성·조회에 실패하면 한계와 필요한 조치를 알립니다.
+팩 설치 자체는 CodeGraph 설치·색인이나 프로젝트 문서 생성을 실행하지 않습니다.
+
 ## 프로젝트 기본 지침: 문제 정의부터 완성품까지
 
 설치되는 [AGENTS.md](AGENTS.md)에는 프로젝트를 시작할 때 정리할 기본 항목이 들어 있습니다.
-기존 자료와 답변을 먼저 활용하고, 새 작업의 기본 정의는 `spec/requirement.md`와 `spec/requirement.html`에 기록합니다.
+기존 자료와 답변을 먼저 활용하고, 새 작업의 기본 정의는 `spec/requirement.md`에 기록합니다.
 설치만으로 프로젝트를 정하거나 실행을 시작하지 않습니다.
 
 | 항목 | 정리할 내용 |
@@ -85,17 +100,14 @@ PoC만 요청했다면 실험 결과와 다음 단계 제안에서 끝냅니다.
 
 ## 검토용 문서 받기
 
-요구사항·설계·작업 계획·구현·리뷰 결과는 **Markdown과 HTML 두 형식**으로 남기도록 지시합니다.
-별도의 출력 형식 프롬프트 없이, 단계에 도달할 때 해당 문서와 HTML을 만들고 링크를 전달합니다.
+요구사항·설계·작업 계획·구현·리뷰 결과는 **Markdown으로만** 남기도록 지시합니다.
+단계에 도달할 때 해당 문서를 만들고 링크를 전달합니다. 검토용 HTML을 자동 생성하거나 갱신하지 않으며, 기존 HTML 파일도 자동 삭제하지 않습니다.
 
 ```text
 spec/
 ├── requirement.md
-├── requirement.html
 ├── architecture.md
-├── architecture.html
-├── tasks.md
-└── tasks.html
+└── tasks.md
 ```
 
 `requirement`에는 문제·범위·성공 기준, `architecture`에는 구조·인터페이스·설계 근거,
@@ -104,24 +116,19 @@ spec/
 요구사항만 요청하면 이후 단계 문서를 미리 만들지 않습니다. 사용자가 지정한 형식·위치와 기존 작업의 계속 사용은 존중하며, 단순 질문이나 설치만 할 때는 문서를 만들지 않습니다.
 문서는 사용자가 요청한 언어로 작성합니다.
 
-| 문서 | 검토 방법 |
-| --- | --- |
-| Markdown | 요구사항 ID, 결정 근거, 변경 이력과 검증 결과를 읽고 수정하는 원본 기록 |
-| HTML | 브라우저에서 목차·상태 요약·표를 보며 검토하는 보기용 문서 |
-
 문서 앞부분에는 현재 단계, 이전 버전에서 달라진 점, 막힌 사항과 사용자 결정이 필요한 질문을 모읍니다.
 본문에는 요구사항·완료 기준, 설계 선택과 대안, 리뷰 지적과 수정 상태, 실제 검증 결과와 미실행 항목을 정리합니다.
-리뷰 에이전트는 검토 결과를 반환하고, 주 작업자가 Markdown을 갱신한 뒤 같은 내용으로 HTML을 맞춥니다.
+리뷰 에이전트는 검토 결과를 반환하고, 주 작업자가 해당 Markdown에 결과와 수정·재검증 근거를 기록합니다.
 
-HTML은 CSS를 포함한 단일 파일로 작성하며, 서버·별도 빌드·외부 라이브러리 없이 로컬에서 열 수 있도록 합니다.
-긴 코드와 로그는 접어서 볼 수 있게 하고 인쇄용 스타일도 제공합니다. 요청한 단계 밖의 결과를 채워 넣거나,
-검증하지 않은 내용을 완료로 표시하지 않습니다. 파일 쓰기가 금지된 요청에서는 대화에 Markdown으로 반환하고 HTML 미생성을 알립니다.
+요청한 단계 밖의 결과를 채워 넣거나 검증하지 않은 내용을 완료로 표시하지 않습니다.
+파일 쓰기가 금지된 요청에서는 대화에 Markdown으로 반환합니다.
 
 ## 스킬과 에이전트의 역할
 
 | 구성 | 역할 |
 | --- | --- |
 | [AGENTS.md](AGENTS.md) | 작업 순서, 리뷰 진행 조건, 모델 활용과 병렬 작업의 공통 지침 |
+| [gsp-adopt](.agents/skills/gsp-adopt/SKILL.md) | 기존 프로젝트 조사, CodeGraph 색인·조회, 요구사항·현재 아키텍처·Task 기준 문서 정리 |
 | [gsp-requirements](.agents/skills/gsp-requirements/SKILL.md) | 원문에 근거한 범위·요구사항·완료 기준 작성 |
 | [gsp-architecture](.agents/skills/gsp-architecture/SKILL.md) | 구조·인터페이스·설계 근거·검증 전략 작성 |
 | [gsp-tasks](.agents/skills/gsp-tasks/SKILL.md) | 검토된 설계를 작업·의존관계·완료 조건·검증 방법으로 구체화 |
@@ -153,7 +160,21 @@ HTML은 CSS를 포함한 단일 파일로 작성하며, 서버·별도 빌드·�
 
 ### 모델과 병렬 작업
 
-리뷰 에이전트는 **GPT-6.1 Sol / medium**으로 설정됩니다. 다른 작업의 Sol/Luna 역할별 권장값은
+Task 계획에는 의존관계를 명시한 DAG를 Markdown 안의 JSON 블록으로 기록합니다.
+포맷·중복 ID·잘못된 선행 작업·순환·실행 상태를 Python으로 검사하고, 파일·담당자·자원 충돌과 현재 실행 중인 작업을 고려해 다음 병렬 작업을 제안합니다.
+
+```bash
+python3 .agents/skills/gsp-tasks/scripts/task_dag.py validate spec/tasks.md
+python3 .agents/skills/gsp-tasks/scripts/task_dag.py route spec/tasks.md
+python3 .agents/skills/gsp-tasks/scripts/task_dag.py render spec/tasks.md
+```
+
+소요 시간과 근거가 모두 있으면 긴 잔여 의존 경로를 우선하고, 부족하면 단계 수를 사용합니다.
+작업 하나가 끝날 때마다 상태·증거를 갱신하고 재계산해 새로 가능한 작업을 시작합니다.
+이는 최적해를 보장하는 스케줄러나 자동 agent 실행기가 아니며, 주 작업자가 실제 가용 자원과 권한을 확인하고 배정합니다.
+병렬 한도는 계획에 명시하고 임의 기본값을 두지 않습니다. [DAG 형식과 예제](.agents/skills/gsp-tasks/references/task-dag.md)를 참고하세요.
+
+이 팩은 **`gpt-6.1-sol`과 `gpt-6-luna`**를 사용하도록 안내하며, 리뷰 에이전트는 **`gpt-6.1-sol` / medium**으로 설정됩니다. 역할별 기준은
 [AGENTS.md](AGENTS.md)에 있습니다. 주 작업 모델·전역 설정·서비스 속도는 자동으로 변경하지 않습니다.
 에이전트는 [공식 Codex 형식](https://learn.chatgpt.com/docs/agent-configuration/subagents)을 사용하며,
 별도의 `config.toml`은 설치하지 않습니다.
@@ -163,6 +184,69 @@ HTML은 CSS를 포함한 단일 파일로 작성하며, 서버·별도 빌드·�
 [병렬 작업 안내](.agents/skills/gsp-development/references/parallel-work.md)에 있습니다.
 리뷰어의 읽기 전용 지침은 별도의 보안 경계가 아니며, 실제 권한은 부모에게서 상속합니다.
 
+### 세션 간 작업 기록
+
+프로젝트 파일을 수정하는 세션은 **`.gsp-work/`에 작업 내용을 기록**합니다. 각 세션은 자기 기록만 수정하고,
+작업 시작·재개, 인터페이스 변경, 통합 전에 관련 세션의 기록을 읽습니다.
+
+```text
+<주 checkout>/.gsp-work/
+└── sessions/
+    ├── session-고유ID-A/work.md
+    └── session-고유ID-B/work.md
+```
+
+기록에는 담당 범위, 실제 작업 경로와 기준 커밋, 진행 상태, 변경 파일, 인터페이스 변경 제안·합의,
+테스트 대상 코드·명령·결과, 막힌 사항과 다음 행동을 남깁니다. 요구사항과 설계의 정본은 기존 `spec/` 문서로 유지합니다.
+
+여러 worktree에서는 **주 checkout의 `.gsp-work` 절대 경로 하나**를 공유합니다. 별도 대화에도 그 경로를 전달해야 하며,
+각 worktree에 같은 이름의 폴더를 따로 만드는 방식은 공유가 아닙니다. 세션별 기록은 임시 파일을 완성한 뒤 교체하여 읽는 중에 내용이 잘리는 일을 줄입니다.
+
+작업 기록은 자동 알림·코드 동기화·파일 잠금을 제공하지 않습니다. 겹치는 변경은 통합 담당자와 조율하고,
+다른 세션이 읽었다는 확인과 실제 코드에 반영·검증했다는 확인을 구분합니다. 기록이 오래되었다는 이유로 작업을 완료 처리하거나 삭제하지 않습니다.
+설치만 하거나 단순 질문에 답할 때는 기록을 만들지 않으며, 읽기 전용 리뷰어의 결과는 주 작업자가 기록합니다.
+`.gsp-work/`는 기본적으로 Git 추적에서 제외합니다. 자세한 절차는 [세션 기록 안내](.agents/skills/gsp-development/references/session-work.md)에 있습니다.
+
+### 개발 중 요구·설계가 바뀌면
+
+[공통 변경 절차](.agents/skills/gsp-development/references/change-management.md)를 모든 단계에 적용합니다. 이전 done/PASS와 당시 기준은 보존하고, 변경·재검증 Task를 새 ID로 연결합니다. 현재 수용 기준과 후속 소비자도 새 결과를 참조하도록 갱신합니다. 영향받은 진행 작업만 안전한 지점에서 보류하며 독립 작업은 계속합니다.
+
+기존 v1 DAG는 유지됩니다. 자동 개정 검사가 필요한 계획은 v2로 작성해 계약의 현재 개정, 실행 기준, hold, 재검증 경계와 수용 조건을 선언합니다. Python은 선언된 불일치와 배정 조건을 검사하며 의미상 영향과 증거의 진실성은 agent/reviewer가 판단합니다.
+
+```bash
+python3 .agents/skills/gsp-tasks/scripts/task_dag.py validate spec/tasks.md
+python3 .agents/skills/gsp-tasks/scripts/task_dag.py route spec/tasks.md
+python3 .agents/skills/gsp-tasks/scripts/task_dag.py check spec/tasks.md
+```
+
+v2 `check`는 현재 수용 충족 시 0, 미충족 시 1, 잘못된 입력은 2로 종료합니다. v1에는 개정 기반 현재 수용 검증이 없으므로 실행 상태만 따로 보고합니다. 관련 없는 과거 계획을 일괄 변환하지 않습니다.
+
+### 일반 사용자 VM에서 선택형 자동 통보
+
+기본 A는 작업 시작·단계 전환·통합 시 현재 기준을 확인하는 절차입니다. B는 **같은 Linux VM·같은 계정, 기존 Python 3.9+와 호환 Codex 서버**에서 명시적으로 등록한 세션에 변경을 전달하고 read/held/applied 응답을 구분하는 선택 기능입니다.
+
+- 추가 OS/Python 패키지, 관리자 권한, 별도 DB 서버나 시스템 서비스 등록을 요구하지 않습니다. pack의 Python 스크립트를 실행합니다.
+- 기존 사용자 소유의 Codex Unix 소켓을 명시합니다. 설치/도구는 daemon을 설치·시작하거나 사용자 세션을 자동 등록하지 않습니다.
+- 실행 중인 등록 thread에만 지시를 전달합니다. idle thread를 깨우거나 모델 turn을 시작하거나 강제 중단하지 않습니다.
+- 자동 통보에는 사용자 프로세스가 실행 중이어야 합니다. 지원 부족·연결 실패·프로세스 종료 시 A 절차로 이어가며 미해결 상태는 보존합니다.
+- 전달 성공은 안전한 보류/적용 성공이 아닙니다. worker의 실제 근거와 현재 수용 검사를 확인해야 통합합니다.
+
+사용 명령과 실패/복구 절차는 [세션 조정 도구 안내](.agents/skills/gsp-development/references/session-control.md)에 있습니다. 다른 VM/계정/도구 연결이나 실제 모델 worker의 지시 준수를 보장하지 않습니다. `gsp-adopt`의 CodeGraph 조사에는 별도로 기존 CodeGraph가 필요하며, 세션 조정 도구가 그것을 설치하지 않습니다.
+
+### PoC 개발 중 다른 세션에 최적화 맡기기
+
+PoC 담당자를 통합 책임자로 두고, 최적화는 기존 요구사항·설계·작업 ID에 연결된 별도 작업으로 맡깁니다.
+두 세션에 공통 `.gsp-work` 절대 경로, 기준 커밋과 필요한 미커밋 변경, 담당 파일, 유지할 인터페이스,
+개선할 지표와 측정 방법을 전달합니다. 유효한 기존 문서·리뷰를 재사용하며 영향받은 부분만 다시 검토합니다.
+
+PoC 담당자는 겹치지 않는 작업을 계속하고, 최적화 담당자는 별도 worktree에서 기능을 보존하며 같은 조건으로 변경 전후를 비교합니다.
+CPU·GPU 등 공유 자원의 경쟁 부하가 측정을 왜곡하지 않도록 조율합니다. 목표 수치를 주지 않았다면 임의로 만들지 않고 관측된 결과와 한계를 보고합니다.
+
+최적화 담당자는 전달받은 기준 변경과 자신의 추가 변경을 구분하여 패치·커밋과 검증 결과를 반환합니다.
+통합 담당자는 원본의 후속 변경을 확인해 합친 뒤, 실제 PoC 흐름과 관련 기능·성능 검사를 다시 실행합니다.
+후보 구현 완료와 최종 통합 완료는 별도로 기록합니다. 자세한 전달 항목과 절차는
+[PoC·최적화 협업 안내](.agents/skills/gsp-development/references/parallel-work.md#poc-development-with-a-parallel-optimization-task)에 있습니다.
+
 ## 설치되는 파일
 
 ```text
@@ -170,25 +254,31 @@ AGENTS.md
 .codex/agents/
 └── gsp-reviewer.toml
 .agents/skills/
+├── gsp-adopt/SKILL.md
 ├── gsp-requirements/SKILL.md
 ├── gsp-architecture/SKILL.md
-├── gsp-tasks/SKILL.md
+├── gsp-tasks/
+│   ├── SKILL.md
+│   ├── scripts/task_dag.py
+│   └── references/task-dag.md
 ├── gsp-development/
 │   ├── SKILL.md
-│   └── references/parallel-work.md
+│   ├── scripts/session_control.py
+│   └── references/
+│       ├── parallel-work.md
+│       ├── session-work.md
+│       ├── change-management.md
+│       └── session-control.md
 └── gsp-grilling/SKILL.md
 ```
 
 기존 `AGENTS.md`에서는 팩이 관리하는 블록만 갱신합니다. 다른 사용자 지침·스킬·에이전트,
 `.codex/config.toml`, 기존 프로젝트 문서와 입력 키 설정은 보존합니다.
-설치·업데이트는 지침만 배포하며 `spec/` 문서를 생성하거나 기존 `TASK.md`를 변환하지 않습니다.
+설치·업데이트는 지침만 배포하며 `spec/` 문서나 `.gsp-work/` 세션 기록을 생성하거나 기존 `TASK.md`를 변환하지 않습니다.
 같은 내용은 다시 쓰지 않으며, 교체하는 기존 파일은 `.gsp-backups/`에 백업합니다.
-이 백업 폴더를 제외하는 규칙도 프로젝트의 `.gitignore`에 추가합니다.
+백업과 로컬 작업 기록을 제외하도록 `.gsp-backups/`, `.gsp-work/` 규칙을 프로젝트의 `.gitignore`에 추가합니다. 기존 작업 기록은 보존합니다.
 
-구버전의 세 리뷰 스킬은 업데이트 시 차이를 확인한 뒤 백업·제거하고 단일 리뷰 에이전트로 전환합니다.
-같은 폴더의 다른 파일은 보존합니다. 더 오래된 팩의 `timeboxed-workflow`나 별도 역할 TOML은
-스크립트가 자동 삭제하지 않으며, 출처를 확인한 뒤 이전 팩의 파일만 백업해 정리합니다.
-현재 구성인 `gsp-reviewer.toml`은 정리 대상이 아닙니다.
+설치 스크립트는 위 목록의 현재 관리 파일과 `.gitignore`만 처리하며, 목록 밖의 기존 파일은 보존합니다.
 
 <details>
 <summary>설치를 수행하는 Codex용 절차</summary>
@@ -204,9 +294,9 @@ AGENTS.md
    bash "$source_dir/install.sh" "$project_dir"
    ```
 
-3. 관리 파일이 다르거나 구버전 리뷰 스킬이 남아 있으면 기본 설치는 중단된다. 차이를 검토해 사용자 수정을 보존·병합한다. 교체·정리가 적절하면 `--overwrite --dry-run`으로 확인한 뒤 `--overwrite`로 백업·적용한다. 설치를 통과시키기 위해 사용자 내용을 버리지 않는다.
+3. 관리 파일이 다르면 기본 설치는 중단된다. 차이를 검토해 사용자 수정을 보존·병합한다. 교체가 적절하면 `--overwrite --dry-run`으로 확인한 뒤 `--overwrite`로 백업·적용한다. 설치를 통과시키기 위해 사용자 내용을 버리지 않는다.
 4. `.agents`나 `.codex` 쓰기에 승인이 필요하면 정상 승인 절차를 이용한다. 승인이 불가능하면 미완료와 차단 원인을 알린다. 권한을 우회하지 않는다.
-5. 설치된 `AGENTS.md`, 스킬 5개, 참조 문서와 리뷰 에이전트 정의를 읽는다. 파일 설치 성공과 네이티브 에이전트 로드는 구분한다. 역할이 로드되지 않으면 한계를 알리고, 지침에 따라 대체 독립 리뷰 또는 자체 점검 여부를 명시한다. 작업 요청이 없으면 설치 완료 후 기다린다.
+5. 설치된 `AGENTS.md`, 스킬 6개, 참조 문서와 리뷰 에이전트 정의를 읽고 DAG 스크립트가 포함되었는지 확인한다. 파일 설치 성공과 네이티브 에이전트 로드는 구분한다. 역할이 로드되지 않으면 한계를 알리고, 지침에 따라 대체 독립 리뷰 또는 자체 점검 여부를 명시한다. 작업 요청이 없으면 설치 완료 후 기다린다.
 
 스크립트는 다운로드나 모델 호출을 하지 않습니다. 대상 폴더를 생략하면 현재 폴더를 사용합니다.
 사용자 홈·전역 Codex 설정 경로와 관리 대상 심볼릭 링크는 거부합니다.

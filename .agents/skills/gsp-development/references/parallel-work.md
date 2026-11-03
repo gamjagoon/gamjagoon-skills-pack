@@ -4,9 +4,11 @@ Split only independent work, and have one parent integrate it. There is no fixed
 
 ## Assignment contract
 
-For each assignment, record the objective, required inputs and evidence, owned files/directories, prohibited scope, baseline commit and current changes, actual cwd, completion criteria, verification commands, results to return, and known blockers. Do not overlap write ownership. Tell workers that others are working and not to revert existing changes. The parent is responsible for requirements, design, integration, and the final result.
+For each assignment, record the objective, required inputs and evidence, owned files/directories, prohibited scope, baseline commit and current changes, actual cwd, shared `.gsp-work` root and session record path, completion criteria, verification commands, results to return, and known blockers. Do not overlap write ownership. Tell workers that others are working and not to revert existing changes. The parent is responsible for requirements, design, integration, and the final result.
 
 Return changed files, a patch or commit, commands actually run and their results, failure logs, and items not run. Perform reviews read-only and return defects with locations, triggering conditions, and impacts. Label speculative concerns separately.
+
+Follow the [session record procedure](session-work.md) to share work status across isolated workspaces. Writing workers update only their own record in the common directory; this is an intentional coordination write outside their code worktree. Read-only workers return updates to the lead without writing records. Check relevant peers at work boundaries; the record directory provides neither live notifications nor an exclusive ownership lock.
 
 ## Read-only work
 
@@ -89,8 +91,46 @@ First check whether resources such as shared databases, development servers, ext
 
 ## Parent integration and cleanup
 
-Workers do not merge or overwrite the original directly. The parent compares returned changes against the baseline and checks owned files, requirements, and scope. Recheck whether others changed the original, and integrate only changes to the target paths. For example, first run `git apply --check path/to/result.patch` on a reviewed result patch. If there are conflicts, adjust the affected parts directly and run relevant tests and final integration verification. Passing `--check` is not evidence of functional success.
+Workers do not merge or overwrite the original project files directly. The parent compares returned changes against the baseline and checks owned files, requirements, and scope. Consult session records for pending interface changes, acknowledgements and the states actually tested. Recheck whether others changed the original, and integrate only changes to the target paths. For example, first run `git apply --check path/to/result.patch` on a reviewed result patch. If there are conflicts, adjust the affected parts directly and run relevant tests and final integration verification. Passing `--check` is not evidence of functional success. Record the integrated state and test evidence in the integrator's own session record without editing workers' histories.
 
 After preserving failure evidence and necessary results, you may remove your own clean worktree that is no longer needed with `git -C "$repo" worktree remove "$experiment_dir"`. For a dirty worktree, first preserve and check necessary patches and logs. Do not delete another person's directories or changes, and do not use `git clean -fd`, `reset --hard`, or forced worktree removal as cleanup defaults.
 
+## PoC development with a parallel optimization task
+
+Treat optimization as a linked task within the agreed project scope. The PoC lead owns integration unless another owner is explicitly assigned; the optimizer owns the scoped candidate change. Both use isolated code workspaces and the same absolute session-record root. This procedure also applies when the user started the sessions independently. Reuse valid requirements, design and reviews, and reopen only affected parts. Do not create a new product workflow or promote PoC evidence to PoR merely because another agent is involved.
+
+### Handoff before edits
+
+Record the following in the existing task plan and reference it from both session records. The lead owns updates to the shared plan and canonical contract; workers record proposals and progress in their own histories.
+
+| Item | Required information |
+| --- | --- |
+| Relationship | Parent PoC/task ID, optimization task ID, requirement/design IDs, both session paths and integration owner |
+| Effective baseline | Commit plus the allowed staged/unstaged patch and required untracked files, with hashes or equivalent snapshot identity; known baseline failures and missing evidence |
+| Ownership and contract | Candidate files/modules, unchanged inputs/outputs/errors and relevant side effects, contract revision, callers and shared files needing coordination |
+| Improvement and limits | Metric, representative inputs, measurement method/environment, supplied target if any, functional acceptance checks, authorized resources and stop rule |
+| Delivery | Candidate patch/commit relative to the received baseline, baseline/candidate evidence, limitations and integration checks |
+
+Confirm the copied baseline using the dirty-baseline procedure above before recording comparison results. If optimization already started, preserve that work, identify its actual starting state and delta, and reconcile them with the current PoC; do not reset it or treat a guessed baseline as verified. While the optimizer works, the lead continues non-overlapping work. An overlapping file or contract change requires coordination and may hold the affected work, not the whole project.
+
+### Measure and verify the candidate
+
+1. Confirm the suspected bottleneck through existing evidence or bounded measurement. Record baseline correctness checks and measurements before changing the candidate. An existing failure remains an explicit limitation; a fast failing run is not a performance improvement.
+2. Compare the same representative inputs and workload, environment, dependency/build configuration and measurement method. Record cache/warm-up conditions, repetitions and variability where they affect the result. Choose a proportionate method; do not impose an invented universal sample count or threshold.
+3. Coordinate CPU/GPU/I/O-heavy runs on shared hardware so competing work does not confound the comparison, or record controlled load explicitly. If conditions cannot be made comparable, report the result as inconclusive rather than an established speedup. Do not stop another session's processes without authorization.
+4. Check the agreed functional/interface contract and normal, error and boundary behavior alongside performance. Keep required expectations fixed; any change to allowed accuracy, semantics or compatibility follows the owner/user decision path. Check other constrained resources so a speedup does not silently violate a memory or cost limit.
+5. Record exact baseline and candidate states, commands, input identities, measurements, known cost and limitations. Separate measured results from estimates. Respect the agreed scope, budget and stop rule; if the candidate fails correctness, gives inconclusive benefit or reaches the limit, report the result and reassess rather than silently expanding the experiment.
+
+### Deliver only the candidate delta and integrate
+
+The optimizer returns changes made after the received baseline, not a replacement copy of the whole worktree or a HEAD-relative diff that includes the lead's existing dirty changes a second time. For an uncommitted baseline, retain its snapshot or patch and derive/check the candidate delta against that state. For a commit-based handoff, identify the exact base and candidate commits. Include required new files in the reviewed handoff without copying unrelated local state.
+
+The integrator checks current source and contract drift against that base, resolves only affected conflicts, and applies the reviewed delta. A clean textual application alone does not establish compatibility. Rerun the original PoC user flow, affected correctness/regression tests and relevant performance checks on the combined state. If necessary, compare the current integration base before/after the candidate again instead of reusing an obsolete measurement.
+
+Record worker completion and integration acceptance separately. The worker may finish its assigned candidate and evidence while integration remains pending; the task plan and integrator record must keep that pending work visible. Report which state was tested and which acceptance criteria remain unverified. Only the integration owner's combined-state evidence supports an integrated completion claim.
+
 Official environment documentation: [Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents), [Git worktrees](https://learn.chatgpt.com/docs/environments/git-worktrees). Check installed policies and current environment feature support separately.
+
+## Changes while workers run
+
+Apply [change-management.md](change-management.md) at each handoff and integration. Record the received contract/plan revisions and keep old execution evidence. Only affected work pauses at a safe checkpoint; pending independent work may continue. A coordinator's delivery receipt is not a worker's held/applied confirmation. The single integrator updates authoritative contracts and current acceptance; workers never silently rewrite those contracts to match their candidate.

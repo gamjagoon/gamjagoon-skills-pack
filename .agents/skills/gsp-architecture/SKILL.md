@@ -7,6 +7,9 @@ description: Turn reviewed requirements into a minimal structure, interfaces, an
 
 Read the current requirements, requirements review results, existing code structure, and execution environment. Check whether the previous review covered the current requirements, and do not finalize the design of areas with remaining blockers. Do not arbitrarily finalize a design that depends on unresolved required decisions. First use the existing project's structure.
 
+
+For a changed requirement, interface or failed experiment, use the [common change procedure](../gsp-development/references/change-management.md). Record the changed contract revision and inspect actual consumers; keep compatible design decisions and prior evidence. Hand off affected and unknown boundaries plus required revalidation, not a blanket restart.
+
 ## Check ambiguity — grilling
 
 At this stage, also read and apply [gsp-grilling](../gsp-grilling/SKILL.md). Ask when choices about storage, deployment, external integration, security, or compatibility produce different outcomes for the user. Do not finalize structures or interfaces that depend on an answer.
@@ -29,9 +32,11 @@ For important choices, record the rationale and alternatives to actually conside
 
 Follow the project brief and PoC/PoR contract in AGENTS.md. Compare the current approach, reuse or a simple deterministic option, and additional complexity only when justified. If uncertainty warrants an experiment, define the cheapest adequate PoC with representative inputs, baseline, pass/fail evidence, a budget ceiling and stop rule. Explain its limitations and the gaps to the agreed finished deliverable (PoR), with proportionate implementation and verification needs. Keep PoC-only requests within their scope.
 
+For a PoC with a parallel optimization task, define the smallest implementation boundary that preserves the agreed inputs, outputs and relevant error/side-effect behavior. Identify the contract and specification owner, affected callers, and files the PoC lead and optimizer may each change. Follow the [optimization handoff](../gsp-development/references/parallel-work.md#poc-development-with-a-parallel-optimization-task) for the baseline, comparison environment and integration evidence. Workers propose contract changes through their records and handoff; the owner updates the canonical design. Reuse unaffected design decisions and reviews. Hold only work dependent on an unresolved interface or policy change.
+
 ## Human-reviewable deliverables
 
-Follow the "Documents for human review" contract in the project AGENTS.md. The lead maintains a Markdown source and a matching, self-contained HTML view (default `spec/architecture.md` and `spec/architecture.html`), using the user's language. Preserve existing project documents without automatic migration; explicit locations and continuation records follow AGENTS.md. Publish the design rationale, alternatives, interfaces, requirement-to-component mapping, dependencies, and verification plan in both views. Make choices needing user input and their consequences easy to locate. Keep both views synchronized, preserve unrelated files, and link both in the user-facing handoff. Respect explicit format and no-write constraints; do not claim an HTML file exists if it was not created.
+Follow the "Documents for human review" contract in the project AGENTS.md. The lead maintains a Markdown document only (default `spec/architecture.md`), using the user's language. Preserve existing project documents without automatic migration; explicit locations and continuation records follow AGENTS.md. Record the design rationale, alternatives, interfaces, requirement-to-component mapping, dependencies, and verification plan. Make choices needing user input and their consequences easy to locate. Preserve unrelated files and link the document in the user-facing handoff. Respect explicit format and no-write constraints.
 
 ## Completion and handoff
 

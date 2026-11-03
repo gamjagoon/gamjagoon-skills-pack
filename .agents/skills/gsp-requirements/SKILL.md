@@ -7,6 +7,9 @@ description: Organize a user's work request into requirements supported by the o
 
 Read the user's request, provided materials, existing project state, and existing requirements. First distinguish a continuation of existing work from a new request; do not reuse a previous completion judgment or deadline for a new request. Investigate facts that can be checked in files or tools directly, and ask only about unresolved decisions that change the outcome. Do not seek approval again for what has already been decided.
 
+
+When the request changes, use the [common change procedure](../gsp-development/references/change-management.md). Keep the source decision and prior requirement revision, identify affected acceptance/design/task links, and reopen only those parts. A new request without explicit priority preserves running work and enters the existing routing policy.
+
 ## Checking ambiguity — grilling
 
 At this stage, also read and apply [gsp-grilling](../gsp-grilling/SKILL.md). If the goal, target users, scope, or completion criteria can be interpreted in multiple ways, ask questions and do not finalize the affected requirements before receiving answers.
@@ -30,11 +33,13 @@ Do not arbitrarily settle implementation technology as a requirement or add func
 
 ## Problem, experiment, and completion scope
 
-For substantive work, establish the project brief defined in AGENTS.md in `spec/requirement.md` (with its matching HTML view, or the retained continuation record): observed problem and affected users, current baseline, measurable outcome, constraints, scope/non-goals, unresolved assumptions, and whether the request ends at investigation, PoC, or the agreed finished deliverable (PoR). Distinguish unknown limits from unlimited resources. Link PoC hypotheses and PoR acceptance criteria to requirement IDs; do not require a new PoC when existing evidence is sufficient.
+For substantive work, establish the project brief defined in AGENTS.md in `spec/requirement.md` (or the retained continuation record): observed problem and affected users, current baseline, measurable outcome, constraints, scope/non-goals, unresolved assumptions, and whether the request ends at investigation, PoC, or the agreed finished deliverable (PoR). Distinguish unknown limits from unlimited resources. Link PoC hypotheses and PoR acceptance criteria to requirement IDs; do not require a new PoC when existing evidence is sufficient.
+
+For optimization of an existing PoC, reuse its requirements and identify the affected IDs. State the behavior and interface that must remain compatible, the metric to improve, representative inputs, and whether performance is required for PoC acceptance or is a follow-up improvement. Record user-specified targets and constraints without inventing numerical thresholds. If no numeric target was given, a bounded before/after comparison can report observed improvement and limits; do not claim an unspecified target was met. Investigate missing baseline measurements as work, and ask only about unresolved priorities or allowed tradeoffs that change the outcome. Do not expand a PoC optimization into PoR by default.
 
 ## Human-reviewable deliverables
 
-Follow the "Documents for human review" contract in the project AGENTS.md. The lead maintains a Markdown source and a matching, self-contained HTML view (default `spec/requirement.md` and `spec/requirement.html`), using the user's language. Preserve existing project documents without automatic migration; explicit locations and continuation records follow AGENTS.md. Publish the requirements and acceptance criteria, original-text references, unresolved questions with recommendations, and confirmed decisions in both views. If only requirements were requested, do not fill later stages with invented results. Keep both views synchronized, preserve unrelated files, and link both in the user-facing handoff. Respect explicit format and no-write constraints; do not claim an HTML file exists if it was not created.
+Follow the "Documents for human review" contract in the project AGENTS.md. The lead maintains a Markdown document only (default `spec/requirement.md`), using the user's language. Preserve existing project documents without automatic migration; explicit locations and continuation records follow AGENTS.md. Record the requirements and acceptance criteria, original-text references, unresolved questions with recommendations, and confirmed decisions. If only requirements were requested, do not fill later stages with invented results. Preserve unrelated files and link the document in the user-facing handoff. Respect explicit format and no-write constraints.
 
 ## Completion and handoff
 

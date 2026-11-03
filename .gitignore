@@ -11,3 +11,5 @@ dist/
 !.env.example
 
 .gsp-backups/
+.gsp-work/
+.serena/

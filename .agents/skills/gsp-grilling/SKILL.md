@@ -7,11 +7,16 @@ description: Resolve ambiguities requiring user decisions through question round
 
 This is a supporting skill shared by the eight work stages. Apply grilling's question rounds by dependency to this pack's stage progression and independent reviews. It is not a separate work stage and does not require an external grilling installation.
 
+
+When an answer changes a prior decision, follow the [common change procedure](../gsp-development/references/change-management.md): preserve the old decision and its evidence, record the new revision and affected stages/tasks, and hold only dependent work. An authorized implementation choice or compatible revision does not require a new approval round.
+
 ## Distinguish first
 
 - Distinguish facts verifiable from the original text, existing answers, files, or execution from intentions, preferences, and policies that only the user can decide. Investigate facts first. Delegate independent investigation to read-only subagents when possible; check directly if they are unavailable.
 - Ask when the same request can have multiple interpretations that change the scope, expected behavior, data handling, external integrations, or completion criteria. Do not settle an unresolved decision merely by recording it as an assumption.
 - Do not repeatedly ask about already decided matters or routine internal implementation choices within that scope. If the user has delegated a choice, decide within the delegated scope and record the reason.
+
+For optimization, investigate the current code, bottleneck and measurable baseline directly. Ask only when the metric or priority is materially ambiguous, or when a proposed change trades required accuracy, behavior, compatibility or resources for performance without an existing decision. Routine implementation choices within the agreed contract belong to the assigned workers and integration owner. Coordinate interfaces through that owner; do not turn every technical handoff into renewed user approval, and do not treat another agent's silence as acceptance.
 
 ## Question rounds
 
@@ -33,4 +38,4 @@ Example question:
 - The lead worker records the question ID, related requirements, answer or waiting status, decision, and affected stages in the existing work record. Reuse answers to questions with the same meaning in later stages; ask only about changed parts when conditions change. Do not create a new record file for simple questions and answers.
 - If answers change requirements, interfaces, or completion criteria, update only the affected design, task plan, code, verification, and reviews. If a mandatory decision remains unresolved, do not declare that part complete.
 
-For a substantive task with review documents, the lead records questions, recommendations, answers or waiting status, and affected work in the Markdown source and refreshes its HTML view under the project AGENTS.md document contract. Keep undecided questions visible in both views and deliver them to the actual user; publishing a document is not a substitute for asking. Do not create paired documents for a simple question-and-answer exchange alone.
+For a substantive task with review documents, the lead records questions, recommendations, answers or waiting status, and affected work in the Markdown document under the project AGENTS.md document contract. Keep undecided questions visible and deliver them to the actual user; publishing a document is not a substitute for asking. Do not create work documents for a simple question-and-answer exchange alone.

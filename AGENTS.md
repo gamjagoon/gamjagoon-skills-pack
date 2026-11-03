@@ -17,7 +17,7 @@ The script installs only the managed block below, not this source-only entrypoin
 
 ## Project purpose and working brief
 
-Use this as a general-purpose project guide. Start from the problem and intended outcome, not from a technology or a demo deadline. For substantial new work, establish the following brief in `spec/requirement.md`, and maintain its matching HTML view. Reuse answers and repository evidence instead of asking the user to fill in a form from scratch. Keep unknowns explicit; ask only about unresolved decisions that materially affect the outcome. For a small, well-understood change, record only the affected items.
+Use this as a general-purpose project guide. Start from the problem and intended outcome, not from a technology or a demo deadline. For substantial new work, establish the following brief in `spec/requirement.md`. Reuse answers and repository evidence instead of asking the user to fill in a form from scratch. Keep unknowns explicit; ask only about unresolved decisions that materially affect the outcome. For a small, well-understood change, record only the affected items.
 
 | Brief section | What to establish |
 | --- | --- |
@@ -64,6 +64,8 @@ Report the actual state: PoC not needed, planned, in progress, passed or failed;
 
 ## Workflow
 
+When asked to prepare a project not previously developed with GSP for GSP-based work, use [gsp-adopt](.agents/skills/gsp-adopt/SKILL.md). It investigates existing code and scattered materials, creates or refreshes the local CodeGraph index before code investigation, and establishes linked requirements, architecture and task documents using the relevant stages below. Stop after the requested documentation and handoff. Installing this pack alone does not invoke adoption, create an index or start development.
+
 Carry out development work in the following order. Read the skill or reviewer contract for the current stage and pass its outputs and unresolved issues to the next stage. Do not require the user to invoke each stage. If the user requests only one stage, perform only up to that stage. For simple questions and small changes, apply only the necessary stages and briefly record why any were omitted.
 
 | Order | Skill or agent | Output |
@@ -72,35 +74,49 @@ Carry out development work in the following order. Read the skill or reviewer co
 | 2 | [gsp-reviewer](.codex/agents/gsp-reviewer.toml), mode `requirements` | Review of omissions, contradictions, and verifiability |
 | 3 | [Architecture](.agents/skills/gsp-architecture/SKILL.md) | `spec/architecture.md`: minimal structure, interfaces and verification strategy |
 | 4 | [gsp-reviewer](.codex/agents/gsp-reviewer.toml), mode `architecture` | Review of requirements coverage, feasibility, and complexity |
-| 5 | [Task planning](.agents/skills/gsp-tasks/SKILL.md) | `spec/tasks.md`: ordered work, dependencies, ownership and completion checks |
+| 5 | [Task planning](.agents/skills/gsp-tasks/SKILL.md) | `spec/tasks.md`: explicit DAG, dependencies, ownership, Python validation and completion checks |
 | 6 | [gsp-reviewer](.codex/agents/gsp-reviewer.toml), mode `tasks` | Review of coverage, actionable scope, dependencies and verification work |
 | 7 | [Development](.agents/skills/gsp-development/SKILL.md) | Implementation, execution and test results recorded in `spec/tasks.md` |
 | 8 | [gsp-reviewer](.codex/agents/gsp-reviewer.toml), mode `development` | Review of defects and regressions, fixes and revalidation, usage and limitations |
 
-At the start, compare the current request with the source and unfinished items to determine whether it continues existing work or is a separate task. For the same task, continue from valid outputs; for a separate task, create a new title and record its start and any user-specified deadline. Do not reuse the PASS or time of completed work for a new request. For new substantive work, create `spec/` and use `requirement.md`, `architecture.md`, and `tasks.md` with matching HTML views as their stages are reached. Do not create future-stage placeholders or a new root-level work log. Do not migrate, rename, rewrite, or delete existing project documents merely to adopt this layout. For a continuation, reuse and link valid existing records; explicit user locations take precedence. Preserve unrelated content at the default paths; use and report a non-conflicting location if needed. Do not create work documents or a new deadline for simple questions, or start development when asked only to install. Record the following in the relevant stage document:
+At the start, compare the current request with the source and unfinished items to determine whether it continues existing work or is a separate task. For the same task, continue from valid outputs; for a separate task, create a new title and record its start and any user-specified deadline. Do not reuse the PASS or time of completed work for a new request. For new substantive work, create `spec/` and use `requirement.md`, `architecture.md`, and `tasks.md` as their stages are reached. Do not create future-stage placeholders or a new root-level work log. Do not migrate, rename, rewrite, or delete existing project documents merely to adopt this layout. For a continuation, reuse and link valid existing records; explicit user locations take precedence. Preserve unrelated content at the default paths; use and report a non-conflicting location if needed. Do not create work documents or a new deadline for simple questions, or start development when asked only to install. Record the following in the relevant stage document:
 
 - Current task: the source text or its location, changes to the request, scope and budget, current stage, and next action.
 - The connection from requirements → architecture → task IDs → actual verification. Keep existing records and IDs and distinguish changes.
 - Each review: paths of the source and outputs read and their baseline state, review method, verdict and findings, and evidence for fixes and rechecks.
 
+When creating or revising a task plan, include the [explicit DAG](.agents/skills/gsp-tasks/references/task-dag.md) in its Markdown and run the bundled Python validator. Use routing output to propose independent work within actual capacity; record real starts, verified completion and blockers, then reroute as state changes. The tool checks declared structure/scopes and suggests a batch; the lead retains agent dispatch, isolation and integration responsibility. Do not treat script success as task completion or an optimal-schedule guarantee.
+
 Do not seek renewed approval at each stage for work already approved. Investigate facts that can be checked with files or tools, and ask only for important user decisions that change the outcome. Continue work that does not depend on that decision or a blocking defect.
+
+## Changes during the workflow
+
+Use the [common change procedure](.agents/skills/gsp-development/references/change-management.md) across every stage. Preserve prior decisions and done/PASS evidence; add new modification/revalidation tasks and update current contract/acceptance bindings. Reopen only affected stages. Keep running work reserved until its owner confirms a safe checkpoint, and continue independent work. New work without an explicit priority enters the existing routing policy.
+
+Use DAG v2 for declared revision/hold/current-acceptance checks, and compare the candidate's baseline again before integration. Optional [local session coordination](.agents/skills/gsp-development/references/session-control.md) adds registered-session notifications and separate read/held/applied acknowledgements on the same Linux VM/account using existing Python and Codex. It does not install/start services, wake idle agents or replace work-boundary checks. Unavailable delivery remains unresolved; prior ACKs never close a new change.
+
+## Shared session work records
+
+When starting or resuming work that changes project files, read the [session record procedure](.agents/skills/gsp-development/references/session-work.md). Use one shared `.gsp-work/` directory for the project and consult relevant session records before choosing ownership, changing an interface, or integrating changes. For linked worktrees, use the same absolute directory in the main checkout; do not silently create separate records under each worktree. Pass the shared root and the session record path in every handoff. Resolve an unavailable or ambiguous shared location before dependent collaborative writes; do not treat missing access as proof that nobody else is working.
+
+Each writing session owns `.gsp-work/sessions/<unique-session-id>/work.md` and updates only its own record. Record the request, actual cwd, baseline and pre-existing changes, owned files, related task/interface IDs, current status, changes, test commands and exact tested state, results and unrun checks, blockers, and next action. Refresh the record at meaningful changes and before handing off or stopping; read relevant peers' updates at work boundaries. Do not create a session record for installation alone or a simple question. Read-only reviewers return their findings to the lead, who records them without relaxing the reviewer's read-only boundary.
+
+These local Markdown records support coordination; `spec/` or retained project documents remain authoritative for requirements, design and acceptance. A recorded intent is not an exclusive file lock, and another session's silence is not agreement. Resolve overlapping writes with one integration owner or serialize them. Records do not provide automatic notifications, code synchronization, or cross-machine sharing. Keep `.gsp-work/` out of Git by default, preserve existing records, and do not automatically delete or mark stale sessions complete.
 
 ## Documents for human review
 
-For substantive requirements, design, task planning, implementation/verification, and review deliverables, the lead produces both Markdown and HTML without requiring a separate format prompt. Use the user's requested language for the deliverables; these English instructions do not require English output. The default pairs are `spec/requirement.md` / `spec/requirement.html`, `spec/architecture.md` / `spec/architecture.html`, and `spec/tasks.md` / `spec/tasks.html`. Requirements own the problem, acceptance criteria and decisions; architecture owns the design and rationale; tasks owns the execution plan, progress and actual verification evidence. Record each review in its stage document; keep task-plan review and final implementation review separate in `tasks.md`. Cross-link stable IDs instead of duplicating authoritative content. Create only documents needed for the requested stages. Existing records may remain in place for ongoing work without automatic migration. Respect explicitly requested formats, locations, and no-write constraints. Installation alone and simple questions do not create these files. If writing is forbidden, return the permitted Markdown in conversation and state that no HTML file was generated.
+For substantive requirements, design, task planning, implementation/verification, and review deliverables, the lead produces Markdown documents only. Do not generate or refresh companion HTML as part of this workflow, and do not delete existing HTML artifacts automatically. Use the user's requested language for the deliverables; these English instructions do not require English output. The default paths are `spec/requirement.md`, `spec/architecture.md`, and `spec/tasks.md`. Requirements own the problem, acceptance criteria and decisions; architecture owns the design and rationale; tasks owns the execution plan, progress and actual verification evidence. Record each review in its stage document; keep task-plan review and final implementation review separate in `tasks.md`. Cross-link stable IDs instead of duplicating authoritative content. Create only documents needed for the requested stages. Existing records may remain in place for ongoing work without automatic migration. Respect explicitly requested formats, locations, and no-write constraints. Installation alone and simple questions do not create these files. If writing is forbidden, return the permitted Markdown in conversation.
 
-Markdown is the source of truth. Update it first, then refresh the HTML from the same content at each substantive stage handoff, after recording review results or user decisions, and before final delivery. Keep stable requirement, question, and finding IDs and the same revision label in both views. Do not overwrite unrelated existing documents; preserve their content or choose a non-conflicting sibling path and report it. Multiple existing documents may keep their layout with corresponding HTML views rather than being merged into a new record.
+Markdown is the source of truth. Update it at each substantive stage handoff, after recording review results or user decisions, and before final delivery. Keep stable requirement, question, and finding IDs and identify revisions. Do not overwrite unrelated existing documents; preserve their content or choose a non-conflicting sibling path and report it. Multiple existing documents may keep their layout rather than being merged into a new record.
 
-Make both views easy to review:
+Make the documents easy to review:
 - Start with the current stage, scope, outcome so far, changes since the previous revision, unresolved blockers, and decisions needed from the user. Distinguish recommendations from accepted decisions.
 - Include only sections relevant to the requested scope: requirements and acceptance criteria; design rationale and alternatives; implementation tasks and dependencies; review findings; verification evidence and limitations. Do not invent completed stages, PASS verdicts, or test results to fill a template.
 - Use concise headings, a table of contents, and linked IDs. Show findings in a table with blocking status, requirement ID, location, impact, suggested fix, and closure evidence. Show checks with command/input, expected and observed result, evidence type, and whether they passed, failed, or were not run. Provide source/artifact references and mark unavailable links as unavailable.
 - Use portable, GitHub-compatible Markdown with working table-of-contents links. Do not assume renderer-specific heading-ID syntax works. Put literal markup and code in inline or fenced code so quoted input remains visible as text in Markdown too.
-- Keep the complete evidence available in Markdown and HTML; long logs or code may be collapsed in HTML with native `details` elements. Do not omit uncertainty or unrun checks from the HTML summary.
+- Keep the complete evidence available in Markdown or linked evidence files. Do not omit uncertainty or unrun checks from summaries.
 
-Produce a self-contained UTF-8 HTML document with embedded CSS, semantic headings, internal navigation, readable tables and code blocks, visible status text (not color alone), responsive layout, and print styles. It must open as a local file without a server, build step, CDN, external fonts, or JavaScript. Escape source text and code before inserting it into HTML; treat quotes, logs, and user data as text rather than executable markup. Use safe links to available sources instead of embedding active content. Do not add a rendering dependency solely for this output.
-
-The reviewer remains read-only: it returns structured findings to the lead, who updates both files. The reviewer checks consistency between both views when they are present; formatting does not replace reviewing source artifacts or running relevant checks. Before handoff, compare decisions, IDs, verdicts, and evidence between the two views, check links and local readability, and state any check not performed. End the user-facing delivery with clickable links to both documents; files and summaries alone do not count as the user answering an open question.
+The reviewer remains read-only: it returns structured findings to the lead, who updates the relevant Markdown documents. Formatting does not replace reviewing source artifacts or running relevant checks. Before handoff, check decisions, IDs, verdicts, evidence, links, and readability, and state any check not performed. End the user-facing delivery with clickable links to the relevant documents; files and summaries alone do not count as the user answering an open question.
 
 ## Grilling in every stage
 
@@ -132,20 +148,23 @@ When progress or evidence invalidates the plan, identify the bottleneck, remaini
 
 ## Model use
 
-The following are recommendations for selecting roles in available agent tools. The pack installs one project-local role, `gsp-reviewer`, configured for GPT-6.1 Sol (`gpt-6.1-sol`) with medium reasoning. That role file sets the review agent's model and effort; it does not change the primary model, global settings, or service tier. Preserve explicit user choices; if they conflict with the bundled role settings, resolve that conflict before invoking it rather than claiming a spawn override changed the role file's model.
+Use `gpt-6.1-sol` and `gpt-6-luna` for this project unless the user explicitly chooses otherwise. Skills define procedures; they do not switch models.
 
-| Work | Model | effort |
+| Role | Model | Effort |
 | --- | --- | --- |
-| Narrow fact extraction and log triage | GPT-6 Luna (`gpt-6-luna`) | low |
-| Research, exploration, clear implementation, and small experiments | GPT-6 Luna (`gpt-6-luna`) | medium |
-| Primary work, architecture, task planning, integration, and reviews of the four stages | GPT-6.1 Sol (`gpt-6.1-sol`) | medium |
-| Ambiguous debugging and risky changes | GPT-6.1 Sol (`gpt-6.1-sol`) | high |
+| Lead: requirements, planning, complex implementation, integration | `gpt-6.1-sol` | medium |
+| Worker: research, scoped implementation, tests | `gpt-6-luna` | medium |
+| Triage: narrow facts and logs | `gpt-6-luna` | low |
+| Design and risky debugging | `gpt-6.1-sol` | high |
+| Independent read-only reviewer: `gsp-reviewer` | `gpt-6.1-sol` | medium |
 
-Assign the role suited to the problem directly. Do not route sequentially from a cheaper model or set a fixed concurrency count. If model and effort selection is unavailable, work with the currently available settings and do not confuse the model actually used with the recommendation. If a specified model is unavailable, report the limitation and use only alternatives already authorized by the user. Continue primary work that is not blocked by the selection.
+Choose the suited role directly; do not impose a cheap-first sequence or fixed concurrency. Check a configured agent's actual model before invoking it; do not silently substitute another model. The bundled reviewer TOML sets its model and effort. This guide does not change the running primary model, global settings or service tier; report unavailable selections accurately.
 
 ## Parallel work and evidence
 
-Independent read-only investigations may share the original. Perform experiments that write files in a separate worktree or a temporary folder containing copies of only the necessary files. Before parallel work, read the development skill's [isolation procedure](.agents/skills/gsp-development/references/parallel-work.md). Specify the owned files, actual cwd, baseline state, outputs, environment, ports, and completion criteria; only one integration owner applies verified changes.
+Independent read-only investigations may share the original. Perform experiments that write project files in a separate worktree or a temporary folder containing copies of only the necessary files. Each writing session's own shared coordination record follows the procedure above; this exception does not authorize writes to another worker's files or relax a read-only assignment. Before parallel work, read the development skill's [isolation procedure](.agents/skills/gsp-development/references/parallel-work.md). Specify the owned files, actual cwd, baseline state, shared record root and session path, outputs, environment, ports, and completion criteria; only one integration owner applies verified changes.
+
+When one session continues a PoC while another optimizes part of it, use the [PoC and optimization handoff](.agents/skills/gsp-development/references/parallel-work.md#poc-development-with-a-parallel-optimization-task). Link the optimization to the existing requirements and tasks, keep the PoC lead as integration owner unless another owner is explicitly assigned, and continue only non-overlapping independent work in parallel. Agree on the effective code baseline, preserved behavior and interface, optimization metric and comparison method before treating results as improvements. Reuse valid prior stage outputs and reviews; reopen only affected decisions instead of making every worker restart the full workflow. A candidate result and the integrated PoC result must be reported separately.
 
 Preserve uncommitted changes in the original and other workers' edits. Distinguish actual execution, static checks, and mock results; do not mark unperformed verification as successful. Include gsp-grilling for questions in the pack, and do not add other external skills by default. Follow project and platform instructions and the scope of work authorized by the user.
 <!-- GAMJAGOON-SKILLS-PACK:END -->

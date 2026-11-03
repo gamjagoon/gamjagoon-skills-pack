@@ -7,10 +7,10 @@ dry_run=0 overwrite=0 target_arg= target_set=0
 usage() {
     cat <<'HELP'
 Usage: bash install.sh [--dry-run] [--overwrite] [TARGET]
-Install the AGENTS.md managed block, five skills, and native gsp-reviewer agent locally.
+Install the AGENTS.md managed block, six skills with the DAG tool, and native gsp-reviewer locally.
 TARGET defaults to the current directory. No downloads or model calls occur.
   --dry-run    Check conflicts and show changes without creating TARGET
-  --overwrite  Back up and replace differing content; retire three legacy review skills
+  --overwrite  Back up and replace differing managed content
   --help       Show this help
 Existing text outside the managed block and unrelated files are preserved.
 Failed writes trigger best-effort rollback; concurrent edits are left intact.
@@ -53,28 +53,30 @@ for protected in "${HOME:-}" "${HOME:-}/.codex" "${CODEX_HOME:-}"; do
 done
 [[ ! -e $target || -d $target ]] || fail 'TARGET must be a directory'
 rels=(AGENTS.md
+    .agents/skills/gsp-adopt/SKILL.md
     .agents/skills/gsp-grilling/SKILL.md
     .agents/skills/gsp-requirements/SKILL.md
     .agents/skills/gsp-architecture/SKILL.md
     .agents/skills/gsp-tasks/SKILL.md
+    .agents/skills/gsp-tasks/scripts/task_dag.py
+    .agents/skills/gsp-tasks/references/task-dag.md
     .agents/skills/gsp-development/SKILL.md
     .agents/skills/gsp-development/references/parallel-work.md
+    .agents/skills/gsp-development/references/session-work.md
+    .agents/skills/gsp-development/references/change-management.md
+    .agents/skills/gsp-development/references/session-control.md
+    .agents/skills/gsp-development/scripts/session_control.py
     .codex/agents/gsp-reviewer.toml
     .gitignore)
-# Only these formerly managed files are retired; sibling files and directories stay.
-retired_rels=(.agents/skills/gsp-requirements-review/SKILL.md
-    .agents/skills/gsp-architecture-review/SKILL.md
-    .agents/skills/gsp-development-review/SKILL.md)
-all_rels=("${rels[@]}" "${retired_rels[@]}")
 stage=$(mktemp -d)
 lock= backup= success=0
-changed=() retiring=() applied=() removed=() created_dirs=()
+changed=() applied=() created_dirs=()
 # All temporary replacement files live beside destinations for atomic rename.
 replacement=
 cleanup() {
     local status=$? i rel dest restore
     trap - EXIT INT TERM
-    if ((success == 0 && (${#applied[@]} || ${#removed[@]}))); then
+    if ((success == 0 && ${#applied[@]})); then
         printf 'Installation failed; attempting rollback of installer writes.\n' >&2
         for ((i=${#applied[@]}-1; i>=0; i--)); do
             rel=${applied[i]}; dest=$target/$rel
@@ -89,21 +91,6 @@ cleanup() {
             else
                 printf 'Rollback preserved concurrently changed path: %s\n' "$dest" >&2
             fi
-        done
-        for ((i=${#removed[@]}-1; i>=0; i--)); do
-            rel=${removed[i]}; dest=$target/$rel
-            if ! (no_links "$dest") || [[ ! -d $(dirname -- "$dest") ]]; then
-                printf 'Rollback preserved concurrently changed parent: %s\n' "$dest" >&2
-                continue
-            fi
-            restore=$(mktemp -- "$(dirname -- "$dest")/.gsp-restore.XXXXXX") || continue
-            # ln creates only an absent destination, including under a recreation race.
-            if cp -p -- "$stage/old/$rel" "$restore"; then
-                if ! ln -T -- "$restore" "$dest"; then
-                    printf 'Rollback preserved concurrently recreated path or could not restore: %s\n' "$dest" >&2
-                fi
-            fi
-            rm -f -- "$restore"
         done
     fi
     [[ -z $replacement ]] || rm -f -- "$replacement"
@@ -187,9 +174,12 @@ for rel in "${rels[@]}"; do
         fi
     elif [[ $rel = .gitignore ]]; then
         [[ ! -f $dest ]] || cat -- "$dest" > "$stage/new/$rel"
-        if [[ ! -f $dest ]] || ! awk 'END {exit ($0!=".gsp-backups/")}' "$dest"; then
+        # Keep the two local-state exclusions last, even after custom negations.
+        # An exact suffix comparison makes repeated installs byte-idempotent.
+        printf '.gsp-backups/\n.gsp-work/\n' > "$stage/ignore-rules"
+        if [[ ! -f $dest ]] || ! tail -n 2 -- "$dest" | cmp -s -- "$stage/ignore-rules" -; then
             if [[ -s $dest ]]; then printf '\n' >> "$stage/new/$rel"; fi
-            printf '.gsp-backups/\n' >> "$stage/new/$rel"
+            cat -- "$stage/ignore-rules" >> "$stage/new/$rel"
         fi
     else
         [[ -f $source_dir/$rel && ! -L $source_dir/$rel ]] || fail "Missing bundled file: $rel"
@@ -200,30 +190,16 @@ for rel in "${rels[@]}"; do
     fi
     if [[ ! -f $dest ]] || ! cmp -s -- "$dest" "$stage/new/$rel"; then changed+=("$rel"); fi
 done
-for rel in "${retired_rels[@]}"; do
-    dest=$target/$rel
-    check_path "$dest"
-    for protected in "${HOME:-}/.codex/AGENTS.md" "${HOME:-}/.codex/config.toml" "${CODEX_HOME:-}/AGENTS.md" "${CODEX_HOME:-}/config.toml"; do
-        [[ ! -e $dest || ! -e $protected || ! $dest -ef $protected ]] || fail "Destination aliases global configuration: $dest"
-    done
-    if [[ -f $dest ]]; then
-        ((overwrite)) || fail "Legacy review skill exists: $rel (use --overwrite to back up and retire it)"
-        mkdir -p -- "$stage/old/$(dirname -- "$rel")"
-        cp -p -- "$dest" "$stage/old/$rel"
-        retiring+=("$rel")
-    fi
-done
 for rel in "${changed[@]}"; do printf '%s %s\n' "$( ((dry_run)) && printf 'Would install' || printf 'Install')" "$target/$rel"; done
-for rel in "${retiring[@]}"; do printf '%s %s\n' "$( ((dry_run)) && printf 'Would retire' || printf 'Retire')" "$target/$rel"; done
 if ((dry_run)); then printf 'Dry run complete; no target files changed.\n'; success=1; exit 0; fi
-if ((${#changed[@]} == 0 && ${#retiring[@]} == 0)); then printf 'Already installed; no changes.\n'; success=1; exit 0; fi
+if ((${#changed[@]} == 0)); then printf 'Already installed; no changes.\n'; success=1; exit 0; fi
 # Serialize cooperating installers even when TARGET does not yet exist.
 lock_name=$(printf '%s' "$target" | cksum)
 lock_candidate=/tmp/.gsp-install-${UID}-${lock_name%% *}.lock
 mkdir -- "$lock_candidate" 2>/dev/null || fail "Installer lock exists: $lock_candidate (check for an active installer before removing it)"
 lock=$lock_candidate
 # Check every snapshot again under the lock before making any target changes.
-for rel in "${all_rels[@]}"; do
+for rel in "${rels[@]}"; do
     check_path "$target/$rel"
     if [[ -f $stage/old/$rel ]]; then
         [[ -f $target/$rel ]] && cmp -s -- "$stage/old/$rel" "$target/$rel" || fail "Concurrent change detected: $rel"
@@ -241,8 +217,8 @@ ensure_dir() {
     created_dirs+=("$dir")
 }
 ensure_dir "$target"
-# Back up every replacement and retirement before any managed file is changed.
-for rel in "${changed[@]}" "${retiring[@]}"; do
+# Back up every replacement before any managed file is changed.
+for rel in "${changed[@]}"; do
     if [[ -f $stage/old/$rel ]]; then
         if [[ -z $backup ]]; then
             ensure_dir "$target/.gsp-backups"
@@ -251,15 +227,6 @@ for rel in "${changed[@]}" "${retiring[@]}"; do
         mkdir -p -- "$backup/$(dirname -- "$rel")"
         cp -p -- "$stage/old/$rel" "$backup/$rel"
     fi
-done
-for rel in "${retiring[@]}"; do
-    dest=$target/$rel
-    check_path "$dest"
-    [[ -f $dest ]] && cmp -s -- "$stage/old/$rel" "$dest" || fail "Concurrent change detected: $rel"
-    # Record intent before unlink so signal cleanup also covers that operation.
-    # If unlink fails, the no-clobber restore leaves the existing path intact.
-    removed+=("$rel")
-    rm -- "$dest"
 done
 for rel in "${changed[@]}"; do
     dest=$target/$rel
@@ -279,4 +246,4 @@ for rel in "${changed[@]}"; do
 done
 success=1
 [[ -z $backup ]] || printf 'Backups: %s\n' "$backup"
-printf 'Installed five skills, the native gsp-reviewer agent, and the managed AGENTS block.\n'
+printf 'Installed six skills with the DAG tool, the native gsp-reviewer agent, and the managed AGENTS block.\n'
