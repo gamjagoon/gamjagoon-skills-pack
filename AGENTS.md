@@ -15,6 +15,17 @@ The script installs only the managed block below, not this source-only entrypoin
 <!-- GAMJAGOON-SKILLS-PACK:START -->
 # gamjagoon-skills-pack
 
+<!-- CODEGRAPH_START -->
+## CodeGraph
+
+When you need to understand or locate code, resolve the actual project root and use CodeGraph BEFORE grep/find or reading code files. Check `codegraph status --json "<absolute-project-root>"` for the actual index path and readiness; `.codegraph/` may be absent when a configured index exists elsewhere. If the target has no usable index, run `CODEGRAPH_TELEMETRY=0 codegraph init "<absolute-project-root>"` and wait for successful completion before investigating code. Reuse an existing index rather than initializing it again; sync it when stale and confirm relevant query results before relying on it.
+
+Follow the initialization safeguards in [gsp-adopt](.agents/skills/gsp-adopt/SKILL.md): select manual sync if prompted, do not use `--yes` blindly, and do not install hooks or change global configuration. If CodeGraph is unavailable, initialization fails, or a no-write constraint prevents indexing, report the concrete limitation and hold dependent code investigation; continue independent document work. Do not silently fall back to a full text scan. Installing this pack alone does not run initialization.
+
+- **MCP tool** (when available): `codegraph_explore` answers most code questions in one call — the relevant symbols' verbatim source plus the call paths between them, including dynamic-dispatch hops grep can't follow. Name a file or symbol in the query to read its current line-numbered source. If it's listed but deferred, load it by name via tool search.
+- **Shell** (when the CLI is available): run `codegraph explore "<symbol names or question>"` from the target project root to print the same output.
+<!-- CODEGRAPH_END -->
+
 ## Project purpose and working brief
 
 Use this as a general-purpose project guide. Start from the problem and intended outcome, not from a technology or a demo deadline. For substantial new work, establish the following brief in `spec/requirement.md`. Reuse answers and repository evidence instead of asking the user to fill in a form from scratch. Keep unknowns explicit; ask only about unresolved decisions that materially affect the outcome. For a small, well-understood change, record only the affected items.
@@ -91,17 +102,15 @@ Do not seek renewed approval at each stage for work already approved. Investigat
 
 ## Changes during the workflow
 
-Use the [common change procedure](.agents/skills/gsp-development/references/change-management.md) across every stage. Preserve prior decisions and done/PASS evidence; add new modification/revalidation tasks and update current contract/acceptance bindings. Reopen only affected stages. Keep running work reserved until its owner confirms a safe checkpoint, and continue independent work. New work without an explicit priority enters the existing routing policy.
+When a request, contract, interface, test result or integration basis changes, read and apply the [common change procedure](.agents/skills/gsp-development/references/change-management.md). It owns revision history, affected-stage reopening, safe checkpoints, new modification/revalidation tasks and current acceptance bindings. Preserve old done/PASS evidence; hold only dependent work, retain running reservations until their owner confirms a safe checkpoint, and compare candidate/current baselines before integration. Use DAG v2 for declared revision/hold/revalidation/current-acceptance checks; do not mass-migrate unrelated plans.
 
-Use DAG v2 for declared revision/hold/current-acceptance checks, and compare the candidate's baseline again before integration. Optional [local session coordination](.agents/skills/gsp-development/references/session-control.md) adds registered-session notifications and separate read/held/applied acknowledgements on the same Linux VM/account using existing Python and Codex. It does not install/start services, wake idle agents or replace work-boundary checks. Unavailable delivery remains unresolved; prior ACKs never close a new change.
+For explicitly selected same-VM/account notifications, read [local session coordination](.agents/skills/gsp-development/references/session-control.md). It adds registered-session delivery and separate read/held/applied acknowledgements using existing Python and Codex. It does not install/start services, wake idle agents or replace work-boundary checks. Unavailable delivery stays unresolved; prior ACKs never close a new change.
 
 ## Shared session work records
 
-When starting or resuming work that changes project files, read the [session record procedure](.agents/skills/gsp-development/references/session-work.md). Use one shared `.gsp-work/` directory for the project and consult relevant session records before choosing ownership, changing an interface, or integrating changes. For linked worktrees, use the same absolute directory in the main checkout; do not silently create separate records under each worktree. Pass the shared root and the session record path in every handoff. Resolve an unavailable or ambiguous shared location before dependent collaborative writes; do not treat missing access as proof that nobody else is working.
+Before starting or resuming project-file changes, read and apply the [session record procedure](.agents/skills/gsp-development/references/session-work.md). It owns shared-root resolution, record contents, atomic updates, peer checks and handoffs. Use one absolute `.gsp-work/` in the main checkout across linked worktrees; resolve unavailable or ambiguous access before dependent writes. Each writing session updates only its unique `sessions/<id>/work.md`; pass the shared root and record path in handoffs. Consult relevant peers before ownership/interface changes and integration, and refresh your record at meaningful changes and before stopping.
 
-Each writing session owns `.gsp-work/sessions/<unique-session-id>/work.md` and updates only its own record. Record the request, actual cwd, baseline and pre-existing changes, owned files, related task/interface IDs, current status, changes, test commands and exact tested state, results and unrun checks, blockers, and next action. Refresh the record at meaningful changes and before handing off or stopping; read relevant peers' updates at work boundaries. Do not create a session record for installation alone or a simple question. Read-only reviewers return their findings to the lead, who records them without relaxing the reviewer's read-only boundary.
-
-These local Markdown records support coordination; `spec/` or retained project documents remain authoritative for requirements, design and acceptance. A recorded intent is not an exclusive file lock, and another session's silence is not agreement. Resolve overlapping writes with one integration owner or serialize them. Records do not provide automatic notifications, code synchronization, or cross-machine sharing. Keep `.gsp-work/` out of Git by default, preserve existing records, and do not automatically delete or mark stale sessions complete.
+Keep `.gsp-work/` out of Git and preserve existing records. Records support coordination, not locking, notifications, synchronization or proof that another session is idle or agrees. Resolve overlapping writes through one integration owner or serialization. Authoritative requirements and acceptance stay in stage documents. Installation alone and simple questions need no session record; read-only reviewers return findings for the lead to record.
 
 ## Documents for human review
 
@@ -120,25 +129,21 @@ The reviewer remains read-only: it returns structured findings to the lead, who 
 
 ## Grilling in every stage
 
-Apply [gsp-grilling](.agents/skills/gsp-grilling/SKILL.md) alongside all eight stages. Investigate facts verifiable from the source, files, or execution, and ask the user about ambiguous intent, policy, or expected behavior that changes the outcome. Ask questions whose prerequisite decisions have been made, together with recommendations, and continue to the next round according to the answers. Do not merely record questions and move on or treat recommendations as answers.
-
-Hold only work dependent on an answer and continue independent work. The primary worker collects questions from review and work subagents and conveys them to the actual user. Reuse existing answers and resume already authorized work once the necessary answers are available. Do not require a separate question prompt or renewed approval at each stage.
+At every applicable production/review stage, read and apply [gsp-grilling](.agents/skills/gsp-grilling/SKILL.md), which owns question rounds and decision recording. Investigate source/file/execution facts first; ask the actual user only about unresolved intent, policy or expected behavior that changes the outcome. The lead consolidates worker/reviewer questions with recommendations, reuses existing answers, and holds only dependent work. A recommendation, silence or elapsed time is not an answer. Do not seek renewed approval for already authorized work.
 
 ## Reviews and stage transitions
 
-Use the native `gsp-reviewer` agent for all four review stages, separate from the author. Its single definition is [.codex/agents/gsp-reviewer.toml](.codex/agents/gsp-reviewer.toml). Request agent type `gsp-reviewer` with mode `requirements`, `architecture`, `tasks`, or `development`; reuse the same reviewer conversation within a task when possible, while passing current artifacts and decisions on every handoff. Do not create separate reviewer roles for each stage. Provide the absolute project root, explicit mode and review scope, actual paths of the original text and current outputs, relevant requirement IDs, baseline state, change scope, execution evidence, and open questions with existing answers. The reviewer returns findings; the lead handles user questions, fixes, and stage progression. The reviewer does not delegate another reviewer or implement fixes. The reviewer reads the relevant files directly instead of relying only on summaries and records the baseline reviewed. Give evidence identifying the state, such as the commit and relevant working diff for Git, or the time of inspection and change history of the relevant files for non-Git work. If the subject changes during review, recheck the changed parts.
+Use the native `gsp-reviewer` for all four modes (`requirements`, `architecture`, `tasks`, `development`), separate from the author; reuse its conversation within a task when possible. Before requesting review, read its [single contract](.codex/agents/gsp-reviewer.toml) for mode-specific checks, required handoff/report fields, baseline verification and read-only isolation. Supply the absolute project root, explicit mode/scope, actual original/current artifact paths, requirement/task IDs, baseline and relevant diff, execution evidence, and unresolved questions with existing answers. The reviewer reads sources directly and returns findings; the lead records them, handles user decisions and fixes, and advances stages. The reviewer does not implement or delegate another reviewer.
 
 | Verdict | Meaning and primary worker's action |
 | --- | --- |
-| PASS | There are no blockers in the review scope and evidence supports the verdict. Pass valid outputs to the next stage. |
-| WARN | There are nonblocking suggestions or review limitations. Record their impact and whether they were addressed, then proceed. |
-| FAIL | A required behavior is defective, or a decision or evidence needed to advance the stage is missing. Hold subsequent work dependent on that item and the completion verdict. |
+| PASS | No blockers in the explicit scope; evidence supports advancing valid outputs. |
+| WARN | Nonblocking suggestions or review limits; record their impact and disposition, then proceed. |
+| FAIL | Mandatory behavior is defective, or a required decision/evidence is missing; hold dependent work and completion. |
 
-For each finding, record its ID, related requirements, location, triggering conditions, impact, and whether it is blocking. Distinguish unverified matters from confirmed defects. Do not conclude that nothing is missing or execution succeeded without the necessary source and execution evidence. If asked to review code only, limit the verdict to code review and separately state whether execution was performed.
+Record each finding's stable ID, requirement, location, trigger/reproduction, impact and blocking status. Distinguish confirmed defects from unverified concerns; code-only review does not establish execution. For significant findings record `fix location / original-condition recheck / result / verifier`; close only with relevant evidence. Recheck affected changes if the baseline changes during review. Preserve earlier verdicts/baselines and distinguish author revalidation from independent re-review. Final completion depends on current mandatory acceptance and unresolved blockers, not a narrow PASS or test count.
 
-For each significant finding, the primary worker records `fix location / recheck of the original reproduction conditions / result / verifier`. Recheck only the fix and affected parts; do not repeat the entire review by habit. If only the author revalidated, do not change the earlier review's PASS as if it represented the latest result; state that independent re-review was not performed. Do not close a finding without checks directly related to reproducing it.
-
-If the native role is unavailable, report that it was not loaded. When independent subagents with authorized model settings are available, provide one with the same reviewer contract and explicit mode, and label it as a fallback rather than a native `gsp-reviewer` run. If independent subagents are unavailable, proceed with a self-check and explicitly state that independent review was not performed. Reading the TOML or a successful installation alone does not establish native-agent execution. The read-only review contract does not create a separate security sandbox; permissions are inherited, and checks that write files require an isolated location. If requirements or interfaces change, reopen only the affected design, task plan, implementation, verification, and review. Judge final completion by the actual evidence for current mandatory requirements and unresolved blockers. Do not declare completion based only on a review PASS or test count.
+If the native role is unavailable, report that it was not loaded. Use an available independent subagent with authorized model settings and the same contract/mode, explicitly labeled fallback; if none is available, disclose self-check and no independent review. Reading TOML or installing files proves neither native loading nor execution. Read-only instructions inherit permissions and provide no separate security sandbox; isolate checks that write files.
 
 ## Budget, scope, and stopping conditions
 
@@ -150,21 +155,25 @@ When progress or evidence invalidates the plan, identify the bottleneck, remaini
 
 Use `gpt-6.1-sol` and `gpt-6-luna` for this project unless the user explicitly chooses otherwise. Skills define procedures; they do not switch models.
 
+Use these exact model IDs in assignments, configuration, and model-use reports. Do not shorten them to versionless names such as "Sol" or "Luna", or substitute another version without the user's explicit choice.
+
 | Role | Model | Effort |
 | --- | --- | --- |
 | Lead: requirements, planning, complex implementation, integration | `gpt-6.1-sol` | medium |
-| Worker: research, scoped implementation, tests | `gpt-6-luna` | medium |
+| Worker: research and exploration | `gpt-6-luna` | medium |
+| Worker: scoped implementation and test implementation | `gpt-6-luna` | xhigh |
 | Triage: narrow facts and logs | `gpt-6-luna` | low |
 | Design and risky debugging | `gpt-6.1-sol` | high |
-| Independent read-only reviewer: `gsp-reviewer` | `gpt-6.1-sol` | medium |
+| Independent read-only reviewer: `gsp-reviewer` | `gpt-6.1-sol` | high |
 
 Choose the suited role directly; do not impose a cheap-first sequence or fixed concurrency. Check a configured agent's actual model before invoking it; do not silently substitute another model. The bundled reviewer TOML sets its model and effort. This guide does not change the running primary model, global settings or service tier; report unavailable selections accurately.
 
 ## Parallel work and evidence
 
-Independent read-only investigations may share the original. Perform experiments that write project files in a separate worktree or a temporary folder containing copies of only the necessary files. Each writing session's own shared coordination record follows the procedure above; this exception does not authorize writes to another worker's files or relax a read-only assignment. Before parallel work, read the development skill's [isolation procedure](.agents/skills/gsp-development/references/parallel-work.md). Specify the owned files, actual cwd, baseline state, shared record root and session path, outputs, environment, ports, and completion criteria; only one integration owner applies verified changes.
+Before parallel assignments or experiments, read and apply the [isolation and integration procedure](.agents/skills/gsp-development/references/parallel-work.md). Independent read-only investigations may share the original; writing experiments use a separate worktree or temporary permitted copies. Specify objective, owned files, actual cwd, baseline, shared root/record, outputs, environment/ports and completion criteria. Only the integration owner applies verified changes; preserve other workers' files and uncommitted changes.
 
-When one session continues a PoC while another optimizes part of it, use the [PoC and optimization handoff](.agents/skills/gsp-development/references/parallel-work.md#poc-development-with-a-parallel-optimization-task). Link the optimization to the existing requirements and tasks, keep the PoC lead as integration owner unless another owner is explicitly assigned, and continue only non-overlapping independent work in parallel. Agree on the effective code baseline, preserved behavior and interface, optimization metric and comparison method before treating results as improvements. Reuse valid prior stage outputs and reviews; reopen only affected decisions instead of making every worker restart the full workflow. A candidate result and the integrated PoC result must be reported separately.
+For concurrent PoC development and optimization, read the same reference's [optimization handoff](.agents/skills/gsp-development/references/parallel-work.md#poc-development-with-a-parallel-optimization-task). Keep the PoC lead as integration owner unless explicitly changed. Reuse valid parent requirements/design/task IDs and reviews, agree the effective baseline, preserved interface/behavior and measurement conditions, and continue independent work. Keep candidate evidence separate from combined-state revalidation and acceptance.
 
-Preserve uncommitted changes in the original and other workers' edits. Distinguish actual execution, static checks, and mock results; do not mark unperformed verification as successful. Include gsp-grilling for questions in the pack, and do not add other external skills by default. Follow project and platform instructions and the scope of work authorized by the user.
+Distinguish actual execution, static checks and mock evidence; never mark unperformed verification successful. Include gsp-grilling in the pack and do not add other external skills by default. Follow project/platform instructions and the user's authorized scope.
+
 <!-- GAMJAGOON-SKILLS-PACK:END -->

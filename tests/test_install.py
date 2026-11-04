@@ -79,13 +79,39 @@ class InstallTests(unittest.TestCase):
             self.assertEqual((self.target / rel).read_bytes(), (self.source / rel).read_bytes())
         agents = (self.source / "AGENTS.md").read_text()
         block = agents[agents.index("<!-- GAMJAGOON-SKILLS-PACK:START -->"):]
+        self.assertLessEqual(len(agents.splitlines()), 200)
+        self.assertLessEqual(len(block.splitlines()), 200)
         self.assertEqual((self.target / "AGENTS.md").read_text(), block)
+        self.assertLessEqual(len((self.target / "AGENTS.md").read_text().splitlines()), 200)
         self.assertFalse((self.target / "spec").exists())
         self.assertFalse((self.target / ".gsp-work").exists())
         self.assertFalse((self.target / ".codegraph").exists())
         self.assertFalse(list(self.target.rglob("*.html")))
         before = snapshot(self.target)
         self.assertIn("Already installed", self.install().stdout)
+        self.assertEqual(snapshot(self.target), before)
+
+    def test_agents_upgrade_preserves_custom_text_beyond_line_limit(self):
+        prefix = "User instruction\n" * 201
+        suffix = "\nKeep this user footer\n"
+        old_block = ("<!-- GAMJAGOON-SKILLS-PACK:START -->\nOld guidance\n"
+                     "<!-- GAMJAGOON-SKILLS-PACK:END -->\n")
+        original = prefix + old_block + suffix
+        write(self.target / "AGENTS.md", original)
+        self.install("--dry-run", expected=1)
+        self.install(expected=1)
+        self.assertEqual((self.target / "AGENTS.md").read_text(), original)
+        self.install("--overwrite", "--dry-run")
+        self.assertEqual((self.target / "AGENTS.md").read_text(), original)
+        self.install("--overwrite")
+        source = (self.source / "AGENTS.md").read_text()
+        block = source[source.index("<!-- GAMJAGOON-SKILLS-PACK:START -->"):]
+        self.assertEqual((self.target / "AGENTS.md").read_text(), prefix + block + suffix)
+        backups = list((self.target / ".gsp-backups").glob("install.*/AGENTS.md"))
+        self.assertEqual(len(backups), 1)
+        self.assertEqual(backups[0].read_text(), original)
+        before = snapshot(self.target)
+        self.install()
         self.assertEqual(snapshot(self.target), before)
 
     def test_unrelated_source_files_are_not_installed(self):

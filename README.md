@@ -174,7 +174,7 @@ python3 .agents/skills/gsp-tasks/scripts/task_dag.py render spec/tasks.md
 이는 최적해를 보장하는 스케줄러나 자동 agent 실행기가 아니며, 주 작업자가 실제 가용 자원과 권한을 확인하고 배정합니다.
 병렬 한도는 계획에 명시하고 임의 기본값을 두지 않습니다. [DAG 형식과 예제](.agents/skills/gsp-tasks/references/task-dag.md)를 참고하세요.
 
-이 팩은 **`gpt-6.1-sol`과 `gpt-6-luna`**를 사용하도록 안내하며, 리뷰 에이전트는 **`gpt-6.1-sol` / medium**으로 설정됩니다. 역할별 기준은
+이 팩은 **`gpt-6.1-sol`과 `gpt-6-luna`**를 사용하도록 안내합니다. `gpt-6-luna`의 구현 작업은 **xhigh**, 리뷰 에이전트는 **`gpt-6.1-sol` / high**로 설정됩니다. 역할별 기준은
 [AGENTS.md](AGENTS.md)에 있습니다. 주 작업 모델·전역 설정·서비스 속도는 자동으로 변경하지 않습니다.
 에이전트는 [공식 Codex 형식](https://learn.chatgpt.com/docs/agent-configuration/subagents)을 사용하며,
 별도의 `config.toml`은 설치하지 않습니다.

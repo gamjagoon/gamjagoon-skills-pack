@@ -7,7 +7,6 @@ description: Turn reviewed requirements and architecture into verifiable tasks w
 
 Read the original request, current requirements and architecture, their review findings and closure evidence, and relevant existing code. Verify the reviews cover the current artifacts. Hold tasks dependent on unresolved blockers; independent planning may continue. A missing design decision belongs in architecture, and a missing user requirement belongs in requirements; do not silently invent either in the task list.
 
-
 For changes to existing work, apply the [common change procedure](../gsp-development/references/change-management.md). Preserve old done/PASS executions and add linked modification/revalidation tasks. Use DAG v2 for automatic revision gating, update current acceptance and pending consumer bindings, and keep affected running reservations until safe hold is acknowledged. Route independent work normally.
 
 ## Check ambiguity — grilling
@@ -51,7 +50,7 @@ The reviewer still checks whether the graph matches real requirements and interf
 
 ## Human-reviewable deliverables
 
-Follow the "Documents for human review" contract in AGENTS.md. Maintain a Markdown document only (default `spec/tasks.md`), in the user's language. Include coverage, dependency order, parallel ownership where applicable, open decisions, and the task-plan review. Preserve stable IDs and prior results when revising; mark changed assumptions and affected work rather than resetting history. The lead updates the document and links it at handoff. Respect explicit format and no-write constraints. Do not create implementation results for a planning-only request.
+Read and follow the [project document contract](../../../AGENTS.md#documents-for-human-review), including Markdown-only output, language, retained/explicit paths, stable IDs, evidence and handoff links. Default: `spec/tasks.md`. Record coverage, dependencies, parallel ownership, open decisions and the task-plan review; preserve stable IDs and prior results and distinguish changed assumptions. Respect stage-only requests and explicit format/no-write constraints.
 
 ## Completion and handoff
 
