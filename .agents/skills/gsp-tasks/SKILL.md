@@ -5,6 +5,8 @@ description: Turn reviewed requirements and architecture into verifiable tasks w
 
 # Task planning
 
+Apply [requested scope and order](../../../AGENTS.md#requested-scope-and-order) before starting this stage. Reuse valid existing artifacts; missing prerequisite documents or reviews alone do not authorize earlier stages. Perform this stage and its review only when included in the requested or already agreed scope, and hand off to later stages only within that scope. Investigate actual blockers without expanding the task.
+
 Read the original request, current requirements and architecture, their review findings and closure evidence, and relevant existing code. Verify the reviews cover the current artifacts. Hold tasks dependent on unresolved blockers; independent planning may continue. A missing design decision belongs in architecture, and a missing user requirement belongs in requirements; do not silently invent either in the task list.
 
 For changes to existing work, apply the [common change procedure](../gsp-development/references/change-management.md). Preserve old done/PASS executions and add linked modification/revalidation tasks. Use DAG v2 for automatic revision gating, update current acceptance and pending consumer bindings, and keep affected running reservations until safe hold is acknowledged. Route independent work normally.

@@ -1,9 +1,11 @@
 ---
 name: gsp-development
-description: Implement features according to reviewed requirements, architecture, and task plans, and verify them through actual execution. Isolate workspaces for independent investigations and experiments, and preserve existing changes.
+description: Implement and verify requested features or scoped changes using applicable existing requirements, architecture and task evidence. Do not recreate a full GSP workflow for a scoped task. Isolate writing experiments and preserve existing changes.
 ---
 
 # Development
+
+Apply [requested scope and order](../../../AGENTS.md#requested-scope-and-order) before starting this stage. Reuse valid existing artifacts; missing prerequisite documents or reviews alone do not authorize earlier stages. Perform this stage and its review only when included in the requested or already agreed scope, and hand off to later stages only within that scope. Investigate actual blockers without expanding the task.
 
 Check the original requirements, current design and task list, reviews required for the applicable stages, and existing changes. Confirm that the reviews concern the current artifacts, and do not start implementation that depends on unresolved blockers. Reuse valid parent-task outputs and reviews for a bounded subtask; reopen only affected decisions and record omitted stages proportionally under AGENTS.md. Within the approved scope, implement the core flow first and execute it in small units. Handle simple changes in proportion to their size and do not add unnecessary planning documents.
 

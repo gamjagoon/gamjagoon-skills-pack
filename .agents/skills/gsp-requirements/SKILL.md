@@ -1,9 +1,11 @@
 ---
 name: gsp-requirements
-description: Organize a user's work request into requirements supported by the original text and observable completion criteria. Use when starting a new feature or project or writing a requirements document. Do not use for reviews of design or implementation results.
+description: Write or revise requirements supported by original text and observable completion criteria when requirements work is requested or belongs to an agreed full GSP workflow. Do not restart requirements for a scoped design or implementation task, or use for reviews of design or implementation results.
 ---
 
 # Writing requirements
+
+Apply [requested scope and order](../../../AGENTS.md#requested-scope-and-order) before starting this stage. Reuse valid existing artifacts; missing prerequisite documents or reviews alone do not authorize earlier stages. Perform this stage and its review only when included in the requested or already agreed scope, and hand off to later stages only within that scope. Investigate actual blockers without expanding the task.
 
 Read the user's request, provided materials, existing project state, and existing requirements. First distinguish a continuation of existing work from a new request; do not reuse a previous completion judgment or deadline for a new request. Investigate facts that can be checked in files or tools directly, and ask only about unresolved decisions that change the outcome. Do not seek approval again for what has already been decided.
 
