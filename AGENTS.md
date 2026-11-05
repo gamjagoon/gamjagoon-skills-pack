@@ -165,16 +165,19 @@ When progress or evidence invalidates the plan, identify the bottleneck, remaini
 
 ## Model use
 
-Use `gpt-6.1-sol` and `gpt-6-luna` for this project unless the user explicitly chooses otherwise. Skills define procedures; they do not switch models.
+Use only gpt-6.1-sol and gpt-6-luna for this project unless the user explicitly chooses otherwise.
 
-Use these exact model IDs in assignments, configuration, and model-use reports. Do not shorten them to versionless names such as "Sol" or "Luna", or substitute another version without the user's explicit choice.
+Assign models and reasoning effort according to the role table below. Explicit spawn overrides must preserve these assignments unless the task is escalated under the escalation rules.
 
+Skills define procedures; they do not switch models or override role-based model assignments.
+
+Use exact model IDs in assignments, configuration, and model-use reports. Do not shorten model IDs or substitute another model version without the user's explicit choice.
 | Role | Model | Effort |
 | --- | --- | --- |
-| Lead: requirements, planning, complex implementation, integration | `gpt-6.1-sol` | medium |
-| Worker: research and exploration | `gpt-6-luna` | medium |
-| Worker: scoped implementation and test implementation | `gpt-6-luna` | xhigh |
-| Triage: narrow facts and logs | `gpt-6-luna` | low |
+| Lead: requirements, planning, complex implementation, integration | `gpt-6.1-sol` | high |
+| Worker: research and exploration | `gpt-6-luna` | high |
+| Worker: scoped implementation and test implementation | `gpt-6.1-sol` | medium |
+| Triage: narrow facts and logs | `gpt-6-luna` | medium |
 | Design and risky debugging | `gpt-6.1-sol` | high |
 | Independent read-only reviewer: `gsp-reviewer` | `gpt-6.1-sol` | high |
 
